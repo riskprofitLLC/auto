@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="28b0b5d0-d2a9-4434-8fdd-63ec87125f11" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.claude/settings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vscode/extensions.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AGENTS.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/expo.icon/Assets/expo-symbol 2.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/expo.icon/Assets/grid.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/expo.icon/icon.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/android-icon-background.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/android-icon-foreground.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/android-icon-monochrome.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/expo-badge-white.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/expo-badge.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/expo-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/favicon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/logo-glow.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/react-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/react-logo@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/react-logo@3x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/splash-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/explore.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/explore@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/explore@3x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/home.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/home@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/home@3x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/tutorial-web.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/reset-project.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/_layout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/explore.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/animated-icon.module.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/animated-icon.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/animated-icon.web.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/app-tabs.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/app-tabs.web.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/external-link.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/hint-row.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/themed-text.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/themed-view.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/ui/collapsible.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/web-badge.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/constants/theme.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/global.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hooks/use-color-scheme.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hooks/use-color-scheme.web.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hooks/use-theme.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tz.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="57" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.3244216605400019" />
+      <entry key="MS500" value="3.434590760847874" />
+      <entry key="S2" value="6.630550283441232" />
+      <entry key="S5" value="10.009257731946413" />
+      <entry key="S10" value="13.77505308638119" />
+      <entry key="S30" value="20.993578875650137" />
+      <entry key="S60" value="24.921455953585863" />
+      <entry key="M2" value="27.610689465820677" />
+      <entry key="M5" value="29.54668926902333" />
+      <entry key="M10" value="30.25578106076361" />
+      <entry key="M15" value="30.49984805648777" />
+      <entry key="M30" value="30.74789460670159" />
+      <entry key="H1" value="30.873434926405842" />
+      <entry key="H2" value="30.936588735425246" />
+      <entry key="H4" value="30.968262106207114" />
+      <entry key="D1" value="30.994705863499792" />
+      <entry key="W1" value="30.99924358479849" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.2438284182573165" />
+      <entry key="MS500" value="3.3990578715467903" />
+      <entry key="S2" value="6.613240091224424" />
+      <entry key="S5" value="9.998861389428809" />
+      <entry key="S10" value="13.767858840329975" />
+      <entry key="S30" value="20.989654908146097" />
+      <entry key="S60" value="24.919008896828842" />
+      <entry key="M2" value="27.60929024579149" />
+      <entry key="M5" value="29.54607749718316" />
+      <entry key="M10" value="30.255465502876618" />
+      <entry key="M15" value="30.499635454992003" />
+      <entry key="M30" value="30.747787170400912" />
+      <entry key="H1" value="30.873380920405253" />
+      <entry key="H2" value="30.93656165996108" />
+      <entry key="H4" value="30.968248550296014" />
+      <entry key="D1" value="30.994703601651047" />
+      <entry key="W1" value="30.99924326161521" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3EGPqN89XtvKsx0k3p1OItf0Chx" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
+    "javascript.preferred.runtime.type.id": "node",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "/home/pi/.config/JetBrains/WebStorm2026.1/node/versions/24.15.0/bin/node",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "vcs.Git",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Android" type="ReactNative" factoryName="React Native">
+      <working-dir value="$PROJECT_DIR$" />
+      <node-interpreter value="project" />
+      <react-native value="$PROJECT_DIR$/node_modules/@react-native-community/cli" />
+      <platform value="ANDROID" />
+      <envs />
+      <only-packager />
+      <method v="2">
+        <option name="ReactNativePackager" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-WS-261.24374.125" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="28b0b5d0-d2a9-4434-8fdd-63ec87125f11" name="Changes" comment="" />
+      <created>1779802122390</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1779802122390</updated>
+      <workItem from="1779802123400" duration="454000" />
+      <workItem from="1779802595937" duration="2675000" />
+      <workItem from="1779808240033" duration="65000" />
+      <workItem from="1779808315049" duration="5641000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
