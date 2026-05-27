@@ -5,63 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="28b0b5d0-d2a9-4434-8fdd-63ec87125f11" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.claude/settings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vscode/extensions.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AGENTS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/expo.icon/Assets/expo-symbol 2.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/expo.icon/Assets/grid.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/expo.icon/icon.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/android-icon-background.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/android-icon-foreground.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/android-icon-monochrome.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/expo-badge-white.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/expo-badge.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/expo-logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/favicon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/logo-glow.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/react-logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/react-logo@2x.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/react-logo@3x.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/splash-icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/explore.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/explore@2x.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/explore@3x.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/home.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/home@2x.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/tabIcons/home@3x.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/tutorial-web.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/reset-project.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/_layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/explore.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/index.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/animated-icon.module.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/animated-icon.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/animated-icon.web.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/app-tabs.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/app-tabs.web.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/external-link.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/hint-row.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/themed-text.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/themed-view.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ui/collapsible.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/web-badge.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/constants/theme.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/global.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/hooks/use-color-scheme.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/hooks/use-color-scheme.web.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/hooks/use-theme.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tz.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bt-server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,34 +16,49 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="57" />
+    <option name="cachedIndexableFilesCount" value="64" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;riskprofitLLC&quot;
+  }
+}</component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="8dd464c7-4c95-4632-bcc8-64bc99090cf6" />
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/riskprofitLLC/auto.git&quot;,
+    &quot;accountId&quot;: &quot;8dd464c7-4c95-4632-bcc8-64bc99090cf6&quot;
+  }
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.3244216605400019" />
-      <entry key="MS500" value="3.434590760847874" />
-      <entry key="S2" value="6.630550283441232" />
-      <entry key="S5" value="10.009257731946413" />
-      <entry key="S10" value="13.77505308638119" />
-      <entry key="S30" value="20.993578875650137" />
-      <entry key="S60" value="24.921455953585863" />
-      <entry key="M2" value="27.610689465820677" />
-      <entry key="M5" value="29.54668926902333" />
-      <entry key="M10" value="30.25578106076361" />
-      <entry key="M15" value="30.49984805648777" />
-      <entry key="M30" value="30.74789460670159" />
-      <entry key="H1" value="30.873434926405842" />
-      <entry key="H2" value="30.936588735425246" />
-      <entry key="H4" value="30.968262106207114" />
-      <entry key="D1" value="30.994705863499792" />
-      <entry key="W1" value="30.99924358479849" />
+      <entry key="MS100" value="1.0774817312461866" />
+      <entry key="MS500" value="1.5995699568955564" />
+      <entry key="S2" value="1.8799539918957242" />
+      <entry key="S5" value="1.9501320900213028" />
+      <entry key="S10" value="1.974747192876852" />
+      <entry key="S30" value="1.9915106221149086" />
+      <entry key="S60" value="1.9973305124007275" />
+      <entry key="M2" value="2.220738443038586" />
+      <entry key="M5" value="7.050019039650433" />
+      <entry key="M10" value="20.626682753621456" />
+      <entry key="M15" value="34.16423285553023" />
+      <entry key="M30" value="62.804595798339655" />
+      <entry key="H1" value="88.98877322187242" />
+      <entry key="H2" value="107.14723585172035" />
+      <entry key="H4" value="117.90959406077343" />
+      <entry key="D1" value="127.88526089488992" />
+      <entry key="W1" value="129.69534970584309" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -118,23 +80,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.2438284182573165" />
-      <entry key="MS500" value="3.3990578715467903" />
-      <entry key="S2" value="6.613240091224424" />
-      <entry key="S5" value="9.998861389428809" />
-      <entry key="S10" value="13.767858840329975" />
-      <entry key="S30" value="20.989654908146097" />
-      <entry key="S60" value="24.919008896828842" />
-      <entry key="M2" value="27.60929024579149" />
-      <entry key="M5" value="29.54607749718316" />
-      <entry key="M10" value="30.255465502876618" />
-      <entry key="M15" value="30.499635454992003" />
-      <entry key="M30" value="30.747787170400912" />
-      <entry key="H1" value="30.873380920405253" />
-      <entry key="H2" value="30.93656165996108" />
-      <entry key="H4" value="30.968248550296014" />
-      <entry key="D1" value="30.994703601651047" />
-      <entry key="W1" value="30.99924326161521" />
+      <entry key="MS100" value="1.0253277468603508" />
+      <entry key="MS500" value="1.5724710967011544" />
+      <entry key="S2" value="1.8708903101328136" />
+      <entry key="S5" value="1.9462760094655012" />
+      <entry key="S10" value="1.9727786495695148" />
+      <entry key="S30" value="1.9908452408320798" />
+      <entry key="S60" value="1.9969966022351828" />
+      <entry key="M2" value="2.2205669117676434" />
+      <entry key="M5" value="7.049841242848669" />
+      <entry key="M10" value="20.626172591779575" />
+      <entry key="M15" value="34.163517806591884" />
+      <entry key="M30" value="62.80381330681167" />
+      <entry key="H1" value="88.9881879759308" />
+      <entry key="H2" value="107.14687711550184" />
+      <entry key="H4" value="117.90939535030138" />
+      <entry key="D1" value="127.8852248160082" />
+      <entry key="W1" value="129.69534447537853" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -149,30 +111,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "master",
-    "javascript.preferred.runtime.type.id": "node",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "/home/pi/.config/JetBrains/WebStorm2026.1/node/versions/24.15.0/bin/node",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "vcs.Git",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;/home/pi/.config/JetBrains/WebStorm2026.1/node/versions/24.15.0/bin/node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Android" type="ReactNative" factoryName="React Native">
       <working-dir value="$PROJECT_DIR$" />
@@ -203,7 +165,8 @@
       <workItem from="1779802123400" duration="454000" />
       <workItem from="1779802595937" duration="2675000" />
       <workItem from="1779808240033" duration="65000" />
-      <workItem from="1779808315049" duration="5641000" />
+      <workItem from="1779808315049" duration="11430000" />
+      <workItem from="1779871877571" duration="739000" />
     </task>
     <servers />
   </component>
