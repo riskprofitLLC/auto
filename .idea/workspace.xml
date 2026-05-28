@@ -5,21 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="28b0b5d0-d2a9-4434-8fdd-63ec87125f11" name="Changes" comment="bt-server.js start ok">
-      <change afterPath="$PROJECT_DIR$/src/types/bluetooth.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bt-server.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/animated-icon.module.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/animated-icon.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/animated-icon.web.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/app-tabs.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/app-tabs.web.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/external-link.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/hint-row.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/themed-text.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/themed-view.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/collapsible.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/web-badge.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/DeviceItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/DeviceItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/SignalStrength.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SignalStrength.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Toast.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Toast.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useBluetooth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useBluetooth.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,10 +20,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="99" />
+    <option name="cachedIndexableFilesCount" value="165" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -53,23 +47,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.379187410008921" />
-      <entry key="MS500" value="2.222438066455987" />
-      <entry key="S2" value="5.409837331327484" />
-      <entry key="S5" value="8.898450795016092" />
-      <entry key="S10" value="12.116635613659101" />
-      <entry key="S30" value="17.05182601918975" />
-      <entry key="S60" value="19.18906992079059" />
-      <entry key="M2" value="20.49470913999298" />
-      <entry key="M5" value="21.371551479786113" />
-      <entry key="M10" value="21.681186040968917" />
-      <entry key="M15" value="21.788900722933516" />
-      <entry key="M30" value="22.338419589877752" />
-      <entry key="H1" value="30.712795000770345" />
-      <entry key="H2" value="81.6492544940589" />
-      <entry key="H4" value="206.0318755478281" />
-      <entry key="D1" value="535.9242886680496" />
-      <entry key="W1" value="639.6453203526207" />
+      <entry key="MS100" value="1.481861986025831" />
+      <entry key="MS500" value="3.5401358066457895" />
+      <entry key="S2" value="7.3838110862395805" />
+      <entry key="S5" value="11.233973212761065" />
+      <entry key="S10" value="14.669043633009617" />
+      <entry key="S30" value="19.84415716893957" />
+      <entry key="S60" value="22.0726079927137" />
+      <entry key="M2" value="23.432622795005113" />
+      <entry key="M5" value="24.345681402403613" />
+      <entry key="M10" value="24.668068172904366" />
+      <entry key="M15" value="24.780113096019896" />
+      <entry key="M30" value="25.333919354313885" />
+      <entry key="H1" value="33.70973699818445" />
+      <entry key="H2" value="84.64526877423236" />
+      <entry key="H4" value="209.0268831205244" />
+      <entry key="D1" value="538.922130657565" />
+      <entry key="W1" value="642.6449525098948" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -77,37 +71,37 @@
       <entry key="S2" value="0.0" />
       <entry key="S5" value="0.0" />
       <entry key="S10" value="0.0" />
-      <entry key="S30" value="3.056872936411961E-231" />
-      <entry key="S60" value="5.528910709070061E-116" />
-      <entry key="M2" value="2.3561003757005194E-58" />
-      <entry key="M5" value="1.0006597224239587E-23" />
-      <entry key="M10" value="4.479805782188571E-12" />
-      <entry key="M15" value="3.721556317406388E-8" />
-      <entry key="M30" value="3.255994604169407E-4" />
-      <entry key="H1" value="0.03105875318729571" />
-      <entry key="H2" value="0.3047836566538911" />
-      <entry key="H4" value="0.9558592476573499" />
-      <entry key="D1" value="2.4791970422831473" />
-      <entry key="W1" value="2.919380355767105" />
+      <entry key="S30" value="3.021691939365723E-231" />
+      <entry key="S60" value="5.497003022399272E-116" />
+      <entry key="M2" value="2.3492919377970943E-58" />
+      <entry key="M5" value="9.995020731180049E-24" />
+      <entry key="M10" value="4.47721371981107E-12" />
+      <entry key="M15" value="3.7201206247170186E-8" />
+      <entry key="M30" value="3.2553664988583896E-4" />
+      <entry key="H1" value="0.031055757311824427" />
+      <entry key="H2" value="0.3047689568381024" />
+      <entry key="H4" value="0.9558361966767963" />
+      <entry key="D1" value="2.4791870776889553" />
+      <entry key="W1" value="2.9193786795048693" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.3240218266115324" />
-      <entry key="MS500" value="2.207523371535008" />
-      <entry key="S2" value="5.400854061441004" />
-      <entry key="S5" value="8.892157545610061" />
-      <entry key="S10" value="12.112077982329627" />
-      <entry key="S30" value="17.049327613670307" />
-      <entry key="S60" value="19.1875679767015" />
-      <entry key="M2" value="20.493876596347924" />
-      <entry key="M5" value="21.37119592297781" />
-      <entry key="M10" value="21.681004228280088" />
-      <entry key="M15" value="21.788778600716363" />
-      <entry key="M30" value="22.338679884999866" />
-      <entry key="H1" value="30.743753539726068" />
-      <entry key="H2" value="81.95371955308691" />
-      <entry key="H4" value="206.9872427395117" />
-      <entry key="D1" value="538.4032631348003" />
-      <entry key="W1" value="642.5646627959946" />
+      <entry key="MS100" value="1.350353120100967" />
+      <entry key="MS500" value="3.392692023071757" />
+      <entry key="S2" value="7.324206974703927" />
+      <entry key="S5" value="11.205520577313898" />
+      <entry key="S10" value="14.65303970534112" />
+      <entry key="S30" value="19.8377494082587" />
+      <entry key="S60" value="22.0691367002113" />
+      <entry key="M2" value="23.430801400381007" />
+      <entry key="M5" value="24.344929213482608" />
+      <entry key="M10" value="24.667687853477563" />
+      <entry key="M15" value="24.779858592903533" />
+      <entry key="M30" value="25.334113375189208" />
+      <entry key="H1" value="33.74065943640684" />
+      <entry key="H2" value="84.9497025909216" />
+      <entry key="H4" value="209.98221899399235" />
+      <entry key="D1" value="541.4010937807444" />
+      <entry key="W1" value="645.564293079903" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -122,33 +116,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/pi/www/auto&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;/home/pi/.config/JetBrains/WebStorm2026.1/node/versions/24.15.0/bin/node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.prettier&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/home/pi/www/auto/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "javascript.preferred.runtime.type.id": "node",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/pi/www/auto",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "/home/pi/.config/JetBrains/WebStorm2026.1/node/versions/24.15.0/bin/node",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "/home/pi/www/auto/node_modules/prettier",
+    "settings.editor.selected.configurable": "settings.typescriptcompiler",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "/home/pi/www/auto/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -193,6 +188,7 @@
       <workItem from="1779890061721" duration="16947000" />
       <workItem from="1779944336156" duration="2596000" />
       <workItem from="1779952632087" duration="10109000" />
+      <workItem from="1779986475060" duration="737000" />
     </task>
     <task id="LOCAL-00001" summary="bt-server.js start ok">
       <option name="closed" value="true" />

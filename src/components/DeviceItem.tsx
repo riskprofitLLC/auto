@@ -1,33 +1,23 @@
-import React from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
-import SignalStrength from './SignalStrength';
-import { BleDevice } from '../types/bluetooth';
+import React from 'react'
+import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native'
+import SignalStrength from './SignalStrength'
+import { BleDevice } from '../types/bluetooth'
 
 interface DeviceItemProps {
-	item: BleDevice;
-	isConnecting: boolean;
-	isConnected: boolean;
-	onConnect: (id: string) => void;
-	onCancel: (id: string) => void;
-	onDisconnect: (id: string) => void;
-	disabled: boolean;
+	item: BleDevice
+	isConnecting: boolean
+	isConnected: boolean
+	onConnect: (id: string) => void
+	onCancel: (id: string) => void
+	onDisconnect: (id: string) => void
+	disabled: boolean
 }
 
-const DeviceItem: React.FC<DeviceItemProps> = ({
-																								 item,
-																								 isConnecting,
-																								 isConnected,
-																								 onConnect,
-																								 onCancel,
-																								 onDisconnect,
-																								 disabled,
-																							 }) => {
+const DeviceItem: React.FC<DeviceItemProps> = ({ item, isConnecting, isConnected, onConnect, onCancel, onDisconnect, disabled }) => {
 	return (
 		<View style={styles.deviceItem}>
 			<View style={{ flex: 1 }}>
-				<Text style={styles.deviceName}>
-					{item.name && item.name !== 'Unknown' ? item.name : 'Неизвестное устройство'}
-				</Text>
+				<Text style={styles.deviceName}>{item.name && item.name !== 'Unknown' ? item.name : 'Неизвестное устройство'}</Text>
 				<Text style={styles.deviceId}>{item.id}</Text>
 			</View>
 
@@ -42,18 +32,14 @@ const DeviceItem: React.FC<DeviceItemProps> = ({
 						</TouchableOpacity>
 					</>
 				) : isConnecting ? (
-					<Button title="Отмена" onPress={() => onCancel(item.id)} color="#ff4444" />
+					<Button title='Отмена' onPress={() => onCancel(item.id)} color='#ff4444' />
 				) : (
-					<Button
-						title="Подключить"
-						onPress={() => onConnect(item.id)}
-						disabled={disabled}
-					/>
+					<Button title='Подключить' onPress={() => onConnect(item.id)} disabled={disabled} />
 				)}
 			</View>
 		</View>
-	);
-};
+	)
+}
 
 const styles = StyleSheet.create({
 	deviceItem: {
@@ -64,41 +50,41 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 		borderRadius: 8,
 		elevation: 2,
-		gap: 8,
+		gap: 8
 	},
 	deviceName: {
 		fontSize: 16,
 		fontWeight: '600',
-		marginBottom: 2,
+		marginBottom: 2
 	},
 	deviceId: {
 		fontSize: 12,
-		color: '#666',
+		color: '#666'
 	},
 	rightActions: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 8,
 		minWidth: 80,
-		justifyContent: 'flex-end',
+		justifyContent: 'flex-end'
 	},
 	greenCircle: {
 		width: 12,
 		height: 12,
 		borderRadius: 6,
-		backgroundColor: '#4CAF50',
+		backgroundColor: '#4CAF50'
 	},
 	disconnectBtn: {
 		backgroundColor: '#FF5252',
 		paddingHorizontal: 8,
 		paddingVertical: 4,
-		borderRadius: 4,
+		borderRadius: 4
 	},
 	disconnectText: {
 		color: 'white',
 		fontSize: 12,
-		fontWeight: '600',
-	},
-});
+		fontWeight: '600'
+	}
+})
 
-export default DeviceItem;
+export default DeviceItem
