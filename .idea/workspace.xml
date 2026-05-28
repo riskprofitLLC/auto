@@ -5,13 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="28b0b5d0-d2a9-4434-8fdd-63ec87125f11" name="Changes" comment="bt-server.js start ok">
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/types/bluetooth.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bt-server.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/index2.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/animated-icon.module.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/animated-icon.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/animated-icon.web.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/app-tabs.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/app-tabs.web.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/external-link.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/hint-row.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/themed-text.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/themed-view.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/collapsible.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/web-badge.tsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,61 +53,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.1704022480249743" />
-      <entry key="MS500" value="2.1706584786221175" />
-      <entry key="S2" value="2.7611687196126233" />
-      <entry key="S5" value="3.5963180644412205" />
-      <entry key="S10" value="5.567397853072805" />
-      <entry key="S30" value="10.310531870404333" />
-      <entry key="S60" value="15.37423519131157" />
-      <entry key="M2" value="24.25122878218631" />
-      <entry key="M5" value="41.06691302145559" />
-      <entry key="M10" value="52.2856991424488" />
-      <entry key="M15" value="57.22692779402841" />
-      <entry key="M30" value="67.52879560025056" />
-      <entry key="H1" value="107.90316423311434" />
-      <entry key="H2" value="209.36440866729157" />
-      <entry key="H4" value="344.7273588858253" />
-      <entry key="D1" value="570.5926762718108" />
-      <entry key="W1" value="626.9439102815717" />
+      <entry key="MS100" value="1.379187410008921" />
+      <entry key="MS500" value="2.222438066455987" />
+      <entry key="S2" value="5.409837331327484" />
+      <entry key="S5" value="8.898450795016092" />
+      <entry key="S10" value="12.116635613659101" />
+      <entry key="S30" value="17.05182601918975" />
+      <entry key="S60" value="19.18906992079059" />
+      <entry key="M2" value="20.49470913999298" />
+      <entry key="M5" value="21.371551479786113" />
+      <entry key="M10" value="21.681186040968917" />
+      <entry key="M15" value="21.788900722933516" />
+      <entry key="M30" value="22.338419589877752" />
+      <entry key="H1" value="30.712795000770345" />
+      <entry key="H2" value="81.6492544940589" />
+      <entry key="H4" value="206.0318755478281" />
+      <entry key="D1" value="535.9242886680496" />
+      <entry key="W1" value="639.6453203526207" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
       <entry key="S5" value="0.0" />
-      <entry key="S10" value="8.494496677213533E-300" />
-      <entry key="S30" value="2.040387011451359E-100" />
-      <entry key="S60" value="1.4284240637205058E-50" />
-      <entry key="M2" value="1.1975746085446659E-25" />
-      <entry key="M5" value="1.2098455618324558E-10" />
-      <entry key="M10" value="1.5576896854198194E-5" />
-      <entry key="M15" value="8.541597466351042E-4" />
-      <entry key="M30" value="0.04932770716900316" />
-      <entry key="H1" value="0.382285340042633" />
-      <entry key="H2" value="1.06928503407864" />
-      <entry key="H4" value="1.7903784952173196" />
-      <entry key="D1" value="2.7525562083565265" />
-      <entry key="W1" value="2.963329801713698" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="3.056872936411961E-231" />
+      <entry key="S60" value="5.528910709070061E-116" />
+      <entry key="M2" value="2.3561003757005194E-58" />
+      <entry key="M5" value="1.0006597224239587E-23" />
+      <entry key="M10" value="4.479805782188571E-12" />
+      <entry key="M15" value="3.721556317406388E-8" />
+      <entry key="M30" value="3.255994604169407E-4" />
+      <entry key="H1" value="0.03105875318729571" />
+      <entry key="H2" value="0.3047836566538911" />
+      <entry key="H4" value="0.9558592476573499" />
+      <entry key="D1" value="2.4791970422831473" />
+      <entry key="W1" value="2.919380355767105" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.1320831274953758" />
-      <entry key="MS500" value="2.1586446394054515" />
-      <entry key="S2" value="2.7575748591957843" />
-      <entry key="S5" value="3.594391767807872" />
-      <entry key="S10" value="5.565824906162122" />
-      <entry key="S30" value="10.3092271920564" />
-      <entry key="S60" value="15.372365666763852" />
-      <entry key="M2" value="24.249040109455084" />
-      <entry key="M5" value="41.06527140642462" />
-      <entry key="M10" value="52.28467742601966" />
-      <entry key="M15" value="57.22702503320091" />
-      <entry key="M30" value="67.5775511810579" />
-      <entry key="H1" value="108.2845961899606" />
-      <entry key="H2" value="210.4326302263109" />
-      <entry key="H4" value="346.5168302342644" />
-      <entry key="D1" value="573.3449867970132" />
-      <entry key="W1" value="629.9072017874367" />
+      <entry key="MS100" value="1.3240218266115324" />
+      <entry key="MS500" value="2.207523371535008" />
+      <entry key="S2" value="5.400854061441004" />
+      <entry key="S5" value="8.892157545610061" />
+      <entry key="S10" value="12.112077982329627" />
+      <entry key="S30" value="17.049327613670307" />
+      <entry key="S60" value="19.1875679767015" />
+      <entry key="M2" value="20.493876596347924" />
+      <entry key="M5" value="21.37119592297781" />
+      <entry key="M10" value="21.681004228280088" />
+      <entry key="M15" value="21.788778600716363" />
+      <entry key="M30" value="22.338679884999866" />
+      <entry key="H1" value="30.743753539726068" />
+      <entry key="H2" value="81.95371955308691" />
+      <entry key="H4" value="206.9872427395117" />
+      <entry key="D1" value="538.4032631348003" />
+      <entry key="W1" value="642.5646627959946" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -184,7 +192,7 @@
       <workItem from="1779883248198" duration="651000" />
       <workItem from="1779890061721" duration="16947000" />
       <workItem from="1779944336156" duration="2596000" />
-      <workItem from="1779952632087" duration="9399000" />
+      <workItem from="1779952632087" duration="10109000" />
     </task>
     <task id="LOCAL-00001" summary="bt-server.js start ok">
       <option name="closed" value="true" />
