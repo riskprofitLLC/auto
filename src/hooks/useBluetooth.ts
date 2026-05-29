@@ -1,255 +1,256 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { Platform, PermissionsAndroid } from 'react-native'
-import { BleManager, BleError, BleErrorCode } from 'react-native-ble-plx'
-import { BleDevice, ToastState } from '../types/bluetooth'
-import { isBenignDisconnectError } from '../utils/bleHelpers'
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { Platform, PermissionsAndroid, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BleManager, BleError, BleErrorCode } from 'react-native-ble-plx';
+import { getBleManager } from '../utils/bleInstance';
+import { BleDevice } from '../types/bluetooth';
+import { isBenignDisconnectError } from '../utils/bleHelpers';
+
+const LAST_DEVICE_KEY = '@last_connected_device_id';
 
 export const useBluetooth = (showToast: (message: string, type: 'success' | 'error' | 'info') => void) => {
-	const [bleManager] = useState(() => new BleManager())
-	const [devices, setDevices] = useState<BleDevice[]>([])
-	const [status, setStatus] = useState<string>('Отключено')
-	const [isScanning, setIsScanning] = useState<boolean>(false)
-	const [connectingId, setConnectingId] = useState<string | null>(null)
-	const [connectedDeviceId, setConnectedDeviceId] = useState<string | null>(null)
+	// 1. ВСЕ ХУКИ ОБЪЯВЛЯЮТСЯ ЗДЕСЬ, В НАЧАЛЕ ФУНКЦИИ
+
+	const [bleManager, setBleManager] = useState<BleManager | null>(null);
+	const [initError, setInitError] = useState<string | null>(null);
+	const [devices, setDevices] = useState<BleDevice[]>([]);
+	const [status, setStatus] = useState<string>('Отключено');
+	const [isScanning, setIsScanning] = useState<boolean>(false);
+	const [connectingId, setConnectingId] = useState<string | null>(null);
+	const [connectedDeviceId, setConnectedDeviceId] = useState<string | null>(null);
+
+	const hasAutoConnectedRef = useRef(false);
+	const isInitializedRef = useRef(false);
+
+	// 2. ЛОГИКА ИНИЦИАЛИЗАЦИИ
+	useEffect(() => {
+		let isMounted = true;
+		try {
+			const mgr = getBleManager();
+			if (isMounted) setBleManager(mgr);
+		} catch (e: any) {
+			console.error('❌ Ошибка инициализации BLE:', e.message);
+			if (isMounted) {
+				setInitError(e.message);
+				// Alert лучше вызывать вне рендер-цикла, но здесь допустимо для фатальной ошибки
+				setTimeout(() => {
+					Alert.alert('Ошибка Bluetooth', 'Нативный модуль BLE недоступен. Перезапустите приложение.', [{ text: 'OK' }]);
+				}, 100);
+			}
+		}
+		return () => { isMounted = false; };
+	}, []);
+
+	// 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (UseCallback для стабильности)
 
 	const requestPermissions = useCallback(async (): Promise<boolean> => {
-		if (Platform.OS !== 'android') return true
+		if (Platform.OS !== 'android') return true;
 		try {
 			if (Platform.Version >= 31) {
 				const granted = await PermissionsAndroid.requestMultiple([
 					PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-					PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
-				])
+					PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+				]);
 				return (
 					granted['android.permission.BLUETOOTH_SCAN'] === PermissionsAndroid.RESULTS.GRANTED &&
 					granted['android.permission.BLUETOOTH_CONNECT'] === PermissionsAndroid.RESULTS.GRANTED
-				)
+				);
 			} else {
-				const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-				return granted === PermissionsAndroid.RESULTS.GRANTED
+				const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+				return granted === PermissionsAndroid.RESULTS.GRANTED;
 			}
 		} catch {
-			return false
+			return false;
 		}
-	}, [])
+	}, []);
+
+	const saveLastDeviceId = async (id: string) => {
+		try { await AsyncStorage.setItem(LAST_DEVICE_KEY, id); } catch {}
+	};
+
+	const getLastDeviceId = async (): Promise<string | null> => {
+		try { return await AsyncStorage.getItem(LAST_DEVICE_KEY); } catch { return null; }
+	};
+
+	const handleError = useCallback((error: any) => {
+		if (error instanceof BleError) {
+			switch (error.errorCode) {
+				case BleErrorCode.BluetoothUnsupported: showToast('Bluetooth не поддерживается', 'error'); break;
+				case BleErrorCode.BluetoothUnauthorized: showToast('Нет разрешения', 'error'); break;
+				case BleErrorCode.BluetoothPoweredOff: showToast('Bluetooth выключен', 'error'); break;
+				case BleErrorCode.DeviceNotFound: showToast('Устройство не найдено', 'error'); break;
+				case BleErrorCode.DeviceDisconnected: showToast('Соединение разорвано', 'error'); break;
+				default: showToast(error.message || 'Ошибка BLE', 'error');
+			}
+		} else {
+			showToast(String(error), 'error');
+		}
+	}, [showToast]);
+
+	// 4. ОСНОВНАЯ ЛОГИКА (зависит от bleManager)
+
+	const checkAndAutoConnect = useCallback(async () => {
+		if (!bleManager) return;
+		if (hasAutoConnectedRef.current) return;
+		hasAutoConnectedRef.current = true;
+
+		const lastId = await getLastDeviceId();
+		if (!lastId) return;
+
+		console.log('🔄 Автоподключение к:', lastId);
+		showToast('Поиск...', 'info');
+
+		let found = false;
+		setIsScanning(true);
+		bleManager.startDeviceScan(null, null, (error, device) => {
+			if (error) { setIsScanning(false); return; }
+			if (device?.id === lastId && !found) {
+				found = true;
+				bleManager.stopDeviceScan();
+				setIsScanning(false);
+				connectToDevice(lastId, true);
+			}
+		});
+		setTimeout(() => {
+			if (!found) {
+				bleManager.stopDeviceScan();
+				setIsScanning(false);
+				showToast('Не найдено', 'info');
+			}
+		}, 5000);
+	}, [bleManager, showToast]);
 
 	const initBluetooth = useCallback(async () => {
+		if (!bleManager) return;
+		if (isInitializedRef.current) return;
+		isInitializedRef.current = true;
+
 		try {
-			const state = await bleManager.state()
+			await new Promise(res => setTimeout(res, 200));
+			const state = await bleManager.state();
 			if (state === 'PoweredOn') {
-				setStatus('Готов к работе')
-				await requestPermissions()
+				setStatus('Готов');
+				await requestPermissions();
+				setTimeout(checkAndAutoConnect, 500);
 			} else {
-				showToast(`Bluetooth выключен: ${state}`, 'error')
+				showToast(`BT выключен: ${state}`, 'error');
 			}
-		} catch {
-			showToast('Ошибка инициализации Bluetooth', 'error')
+		} catch { showToast('Ошибка инициализации', 'error'); }
+	}, [bleManager, requestPermissions, showToast, checkAndAutoConnect]);
+
+	// Запуск инициализации при появлении менеджера
+	useEffect(() => {
+		if (bleManager && !initError) {
+			initBluetooth();
 		}
-	}, [bleManager, requestPermissions, showToast])
+	}, [bleManager, initError, initBluetooth]);
 
-	const handleError = useCallback(
-		(error: any) => {
-			if (error instanceof BleError) {
-				switch (error.errorCode) {
-					case BleErrorCode.BluetoothUnsupported:
-						showToast('Bluetooth не поддерживается на этом устройстве', 'error')
-						break
-					case BleErrorCode.BluetoothUnauthorized:
-						showToast('Отсутствует разрешение на использование Bluetooth', 'error')
-						break
-					case BleErrorCode.BluetoothPoweredOff:
-						showToast('Bluetooth адаптер выключен', 'error')
-						break
-					case BleErrorCode.DeviceNotFound:
-						showToast('Устройство не найдено в зоне действия', 'error')
-						break
-					case BleErrorCode.DeviceDisconnected:
-						showToast('Соединение с устройством разорвано', 'error')
-						break
-					default:
-						showToast(error.message || 'Произошла ошибка BLE', 'error')
-				}
-			} else {
-				showToast(String(error), 'error')
+
+	const startScan = useCallback(async (forceRestart = false) => {
+		if (!bleManager) return;
+		if (isScanning && !forceRestart) return;
+		try {
+			if (!(await requestPermissions())) { showToast('Нет разрешений', 'error'); return; }
+			if (connectedDeviceId) {
+				try { await bleManager.cancelDeviceConnection(connectedDeviceId); setConnectedDeviceId(null); } catch {}
 			}
-		},
-		[showToast]
-	)
-
-	const startScan = useCallback(
-		async (forceRestart = false) => {
-			if (isScanning && !forceRestart) return
-
-			try {
-				const state = await bleManager.state()
-				if (state !== 'PoweredOn') {
-					showToast('Bluetooth выключен', 'error')
-					return
+			setDevices([]);
+			setIsScanning(true);
+			setStatus('Поиск...');
+			bleManager.startDeviceScan(null, null, (error, device) => {
+				if (error) { handleError(error); setIsScanning(false); return; }
+				if (device?.name || device?.id) {
+					setDevices(prev => prev.find(d => d.id === device.id) ? prev : [...prev, { id: device.id, name: device.name || 'Unknown', rssi: device.rssi || 0 }]);
 				}
-				if (!(await requestPermissions())) {
-					showToast('Нет разрешений для работы с Bluetooth', 'error')
-					return
-				}
-
-				if (connectedDeviceId) {
-					try {
-						await bleManager.cancelDeviceConnection(connectedDeviceId)
-						setConnectedDeviceId(null)
-						await new Promise(res => setTimeout(res, 300))
-					} catch {
-						setConnectedDeviceId(null)
-					}
-				}
-
-				setDevices([])
-				setIsScanning(true)
-				setStatus('Поиск устройств...')
-
-				bleManager.startDeviceScan(null, null, (error, device) => {
-					if (error) {
-						handleError(error)
-						setIsScanning(false)
-						return
-					}
-					if (device?.name || device?.id) {
-						setDevices(prev => {
-							if (prev.find(d => d.id === device.id)) return prev
-							return [
-								...prev,
-								{
-									id: device.id,
-									name: device.name || 'Неизвестное',
-									rssi: device.rssi !== null ? device.rssi : 0
-								}
-							]
-						})
-					}
-				})
-
-				setTimeout(() => {
-					if (isScanning) stopScan()
-				}, 15000)
-			} catch {
-				showToast('Не удалось запустить сканирование', 'error')
-				setIsScanning(false)
-			}
-		},
-		[bleManager, isScanning, connectedDeviceId, requestPermissions, handleError, showToast]
-	)
+			});
+			setTimeout(() => { if (isScanning) { bleManager.stopDeviceScan(); setIsScanning(false); } }, 15000);
+		} catch { showToast('Ошибка сканирования', 'error'); setIsScanning(false); }
+	}, [bleManager, isScanning, connectedDeviceId, requestPermissions, handleError, showToast]);
 
 	const stopScan = useCallback(() => {
-		bleManager.stopDeviceScan()
-		setIsScanning(false)
-		setStatus('Поиск остановлен')
-	}, [bleManager])
+		if (bleManager) bleManager.stopDeviceScan();
+		setIsScanning(false);
+		setStatus('Остановлен');
+	}, [bleManager]);
 
 	const rescan = useCallback(async () => {
-		bleManager.stopDeviceScan()
-		setDevices([])
-		await new Promise(res => setTimeout(res, 200))
-		await startScan(true)
-	}, [bleManager, startScan])
+		stopScan();
+		setDevices([]);
+		await new Promise(r => setTimeout(r, 200));
+		await startScan(true);
+	}, [stopScan, startScan]);
 
-	const connectToDevice = useCallback(
-		async (deviceId: string) => {
-			try {
-				setConnectingId(deviceId)
-				setStatus('Подключение...')
-				bleManager.stopDeviceScan()
-				setIsScanning(false)
+	const connectToDevice = useCallback(async (deviceId: string, isAuto = false) => {
+		if (!bleManager) return;
+		try {
+			setConnectingId(deviceId);
+			setStatus(isAuto ? 'Авто...' : 'Подключение...');
+			bleManager.stopDeviceScan();
+			setIsScanning(false);
+			const device = await bleManager.connectToDevice(deviceId);
+			await device.discoverAllServicesAndCharacteristics();
+			setConnectedDeviceId(deviceId);
+			setConnectingId(null);
+			setStatus('Подключено');
+			await saveLastDeviceId(deviceId);
+			showToast(`Подключено`, 'success');
+		} catch (error: any) {
+			handleError(error);
+			setConnectingId(null);
+			if (!connectedDeviceId) { setIsScanning(false); setStatus('Готов'); }
+		}
+	}, [bleManager, connectedDeviceId, handleError, showToast]);
 
-				const device = await bleManager.connectToDevice(deviceId)
-				await device.discoverAllServicesAndCharacteristics()
+	const cancelConnection = useCallback(async (deviceId: string) => {
+		if (!bleManager) return;
+		setConnectingId(null);
+		try { await bleManager.cancelDeviceConnection(deviceId); } catch {}
+		setStatus('Готов');
+	}, [bleManager]);
 
-				setConnectedDeviceId(deviceId)
-				setConnectingId(null)
-				setStatus('Подключено')
-
-				const services = await device.services()
-				showToast(`Успешно подключено к ${device.name || deviceId} (${services.length} сервисов)`, 'success')
-			} catch (error) {
-				handleError(error)
-				setConnectingId(null)
-				if (!connectedDeviceId) {
-					setIsScanning(false)
-					setStatus('Готов к работе')
-				}
-			}
-		},
-		[bleManager, connectedDeviceId, handleError, showToast]
-	)
-
-	const cancelConnection = useCallback(
-		async (deviceId: string) => {
-			setConnectingId(null)
-			setStatus('Отмена...')
-			try {
-				await bleManager.cancelDeviceConnection(deviceId)
-			} catch {}
-			setStatus('Готов к работе')
-		},
-		[bleManager]
-	)
-
-	const disconnect = useCallback(
-		async (deviceId: string) => {
-			if (!deviceId || deviceId !== connectedDeviceId) return
-
-			try {
-				await bleManager.cancelDeviceConnection(deviceId)
-				setConnectedDeviceId(null)
-				setStatus('Отключено')
-				showToast('Устройство успешно отключено', 'info')
-			} catch (error: any) {
-				if (!isBenignDisconnectError(error)) {
-					console.error('Критическая ошибка отключения:', error)
-					showToast('Не удалось отключить устройство', 'error')
-				} else {
-					setConnectedDeviceId(null)
-					setStatus('Отключено')
-				}
-			}
-		},
-		[bleManager, connectedDeviceId, showToast]
-	)
+	const disconnect = useCallback(async (deviceId: string) => {
+		if (!bleManager) return;
+		if (!deviceId || deviceId !== connectedDeviceId) return;
+		try {
+			await bleManager.cancelDeviceConnection(deviceId);
+			setConnectedDeviceId(null);
+			setStatus('Отключено');
+			showToast('Отключено', 'info');
+		} catch (error: any) {
+			if (!isBenignDisconnectError(error)) showToast('Ошибка отключения', 'error');
+			else { setConnectedDeviceId(null); setStatus('Отключено'); }
+		}
+	}, [bleManager, connectedDeviceId, showToast]);
 
 	const cancelConnectionAndStartScan = useCallback(async () => {
-		if (connectingId) {
-			try {
-				await bleManager.cancelDeviceConnection(connectingId)
-			} catch {}
-		}
-		if (connectedDeviceId) {
-			try {
-				await bleManager.cancelDeviceConnection(connectedDeviceId)
-			} catch {}
-		}
-		setConnectingId(null)
-		setConnectedDeviceId(null)
-		setIsScanning(false)
-		await new Promise(res => setTimeout(res, 300))
-		await startScan(false)
-	}, [bleManager, connectingId, connectedDeviceId, startScan])
+		if (!bleManager) return;
+		if (connectingId) { try { await bleManager.cancelDeviceConnection(connectingId); } catch {} }
+		if (connectedDeviceId) { try { await bleManager.cancelDeviceConnection(connectedDeviceId); } catch {} }
+		setConnectingId(null);
+		setConnectedDeviceId(null);
+		setIsScanning(false);
+		await new Promise(r => setTimeout(r, 300));
+		await startScan(false);
+	}, [bleManager, connectingId, connectedDeviceId, startScan]);
 
-	useEffect(() => {
-		initBluetooth()
-		return () => {
-			bleManager.destroy()
-		}
-	}, [initBluetooth, bleManager])
+	// 5. ВОЗВРАТ РЕЗУЛЬТАТА (ВСЕГДА ОДИНАКОВАЯ СТРУКТУРА)
+
+	// Если есть ошибка или менеджер еще не загрузился, возвращаем "пустые" функции,
+	// но НЕ прерываем выполнение хуков выше.
+	const isLoading = !bleManager || !!initError;
 
 	return {
 		devices,
-		status,
-		isScanning,
-		connectingId,
-		connectedDeviceId,
-		startScan,
-		stopScan,
-		rescan,
-		connectToDevice,
-		cancelConnection,
-		disconnect,
-		cancelConnectionAndStartScan
-	}
-}
+		status: isLoading ? (initError ? 'Ошибка BLE' : 'Загрузка...') : status,
+		isScanning: isLoading ? false : isScanning,
+		connectingId: isLoading ? null : connectingId,
+		connectedDeviceId: isLoading ? null : connectedDeviceId,
+		startScan: isLoading ? () => {} : startScan,
+		stopScan: isLoading ? () => {} : stopScan,
+		rescan: isLoading ? () => {} : rescan,
+		connectToDevice: isLoading ? () => {} : connectToDevice,
+		cancelConnection: isLoading ? () => {} : cancelConnection,
+		disconnect: isLoading ? () => {} : disconnect,
+		cancelConnectionAndStartScan: isLoading ? () => {} : cancelConnectionAndStartScan,
+	};
+};

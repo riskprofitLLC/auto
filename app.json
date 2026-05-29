@@ -36,16 +36,6 @@
 						"imageWidth": 76
 					}
 				}
-			],
-			[
-				"expo-build-properties",
-				{
-					"android": {
-						"gradleProperties": {
-							"reactNativeNodeExecutablePath": "/home/pi/.nvm/versions/node/v22.22.3/bin/node"
-						}
-					}
-				}
 			]
 		],
 		"experiments": {

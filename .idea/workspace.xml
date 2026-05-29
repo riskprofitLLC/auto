@@ -5,14 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="28b0b5d0-d2a9-4434-8fdd-63ec87125f11" name="Changes" comment="bt-server.js start ok">
+      <change afterPath="$PROJECT_DIR$/src/utils/bleInstance.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/DeviceItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/DeviceItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/SignalStrength.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SignalStrength.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Toast.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Toast.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/CarControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/CarControls.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hooks/useBluetooth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useBluetooth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/car.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/car.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,7 +21,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="165" />
+    <option name="cachedIndexableFilesCount" value="1282" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -47,23 +48,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.481861986025831" />
-      <entry key="MS500" value="3.5401358066457895" />
-      <entry key="S2" value="7.3838110862395805" />
-      <entry key="S5" value="11.233973212761065" />
-      <entry key="S10" value="14.669043633009617" />
-      <entry key="S30" value="19.84415716893957" />
-      <entry key="S60" value="22.0726079927137" />
-      <entry key="M2" value="23.432622795005113" />
-      <entry key="M5" value="24.345681402403613" />
-      <entry key="M10" value="24.668068172904366" />
-      <entry key="M15" value="24.780113096019896" />
-      <entry key="M30" value="25.333919354313885" />
-      <entry key="H1" value="33.70973699818445" />
-      <entry key="H2" value="84.64526877423236" />
-      <entry key="H4" value="209.0268831205244" />
-      <entry key="D1" value="538.922130657565" />
-      <entry key="W1" value="642.6449525098948" />
+      <entry key="MS100" value="1.5743491774985174" />
+      <entry key="MS500" value="1.8950250709279723" />
+      <entry key="S2" value="1.9726549474122854" />
+      <entry key="S5" value="1.9889709163809315" />
+      <entry key="S10" value="1.9944701686732142" />
+      <entry key="S30" value="1.9981533147438535" />
+      <entry key="S60" value="1.9990762306970797" />
+      <entry key="M2" value="1.9995383780682725" />
+      <entry key="M5" value="2.0097765705915265" />
+      <entry key="M10" value="2.300698457213114" />
+      <entry key="M15" value="2.971524788938974" />
+      <entry key="M30" value="6.149130712150842" />
+      <entry key="H1" value="15.583848895295372" />
+      <entry key="H2" value="48.018806550090304" />
+      <entry key="H4" value="147.6897850117982" />
+      <entry key="D1" value="524.804385576525" />
+      <entry key="W1" value="667.3612383483614" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -71,37 +72,37 @@
       <entry key="S2" value="0.0" />
       <entry key="S5" value="0.0" />
       <entry key="S10" value="0.0" />
-      <entry key="S30" value="3.021691939365723E-231" />
-      <entry key="S60" value="5.497003022399272E-116" />
-      <entry key="M2" value="2.3492919377970943E-58" />
-      <entry key="M5" value="9.995020731180049E-24" />
-      <entry key="M10" value="4.47721371981107E-12" />
-      <entry key="M15" value="3.7201206247170186E-8" />
-      <entry key="M30" value="3.2553664988583896E-4" />
-      <entry key="H1" value="0.031055757311824427" />
-      <entry key="H2" value="0.3047689568381024" />
-      <entry key="H4" value="0.9558361966767963" />
-      <entry key="D1" value="2.4791870776889553" />
-      <entry key="W1" value="2.9193786795048693" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="3.958188972507747E-171" />
+      <entry key="M2" value="6.304087938393533E-86" />
+      <entry key="M5" value="9.359611212128573E-35" />
+      <entry key="M10" value="1.3700767005587588E-17" />
+      <entry key="M15" value="7.841185449367982E-12" />
+      <entry key="M30" value="4.726201584446094E-6" />
+      <entry key="H1" value="0.003741952756157765" />
+      <entry key="H2" value="0.1057910229193654" />
+      <entry key="H4" value="0.5631479620444996" />
+      <entry key="D1" value="2.2699474689554866" />
+      <entry key="W1" value="2.882835975371535" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.350353120100967" />
-      <entry key="MS500" value="3.392692023071757" />
-      <entry key="S2" value="7.324206974703927" />
-      <entry key="S5" value="11.205520577313898" />
-      <entry key="S10" value="14.65303970534112" />
-      <entry key="S30" value="19.8377494082587" />
-      <entry key="S60" value="22.0691367002113" />
-      <entry key="M2" value="23.430801400381007" />
-      <entry key="M5" value="24.344929213482608" />
-      <entry key="M10" value="24.667687853477563" />
-      <entry key="M15" value="24.779858592903533" />
-      <entry key="M30" value="25.334113375189208" />
-      <entry key="H1" value="33.74065943640684" />
-      <entry key="H2" value="84.9497025909216" />
-      <entry key="H4" value="209.98221899399235" />
-      <entry key="D1" value="541.4010937807444" />
-      <entry key="W1" value="645.564293079903" />
+      <entry key="MS100" value="1.527439683446208" />
+      <entry key="MS500" value="1.8833128498397846" />
+      <entry key="S2" value="1.9695855904433797" />
+      <entry key="S5" value="1.9877312874728348" />
+      <entry key="S10" value="1.9938483508545204" />
+      <entry key="S30" value="1.997945594858073" />
+      <entry key="S60" value="1.9989723147133265" />
+      <entry key="M2" value="1.99948640602346" />
+      <entry key="M5" value="2.0097554188273405" />
+      <entry key="M10" value="2.3006826138376693" />
+      <entry key="M15" value="2.9715062418957667" />
+      <entry key="M30" value="6.149108891248368" />
+      <entry key="H1" value="15.587548550944852" />
+      <entry key="H2" value="48.124460030866786" />
+      <entry key="H4" value="148.25262432802617" />
+      <entry key="D1" value="527.0741250593237" />
+      <entry key="W1" value="670.244036254259" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -138,7 +139,7 @@
     "nodejs_interpreter_path": "/home/pi/.config/JetBrains/WebStorm2026.1/node/versions/24.15.0/bin/node",
     "nodejs_package_manager_path": "npm",
     "prettierjs.PrettierConfiguration.Package": "/home/pi/www/auto/node_modules/prettier",
-    "settings.editor.selected.configurable": "settings.typescriptcompiler",
+    "settings.editor.selected.configurable": "settings.javascript.prettier",
     "to.speed.mode.migration.done": "true",
     "ts.external.directory.path": "/home/pi/www/auto/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
@@ -188,7 +189,10 @@
       <workItem from="1779890061721" duration="16947000" />
       <workItem from="1779944336156" duration="2596000" />
       <workItem from="1779952632087" duration="10109000" />
-      <workItem from="1779986475060" duration="737000" />
+      <workItem from="1779986475060" duration="3014000" />
+      <workItem from="1780029942722" duration="5000" />
+      <workItem from="1780030202819" duration="10844000" />
+      <workItem from="1780053433983" duration="3943000" />
     </task>
     <task id="LOCAL-00001" summary="bt-server.js start ok">
       <option name="closed" value="true" />
@@ -203,6 +207,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="bt-server.js start ok" />

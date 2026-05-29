@@ -1,80 +1,146 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native'
 import { BleDevice } from '../types/bluetooth'
-import { ControlButtonProps } from '../types/car'
+import { CarState, ControlType } from '../types/car'
 
 interface CarControlsProps {
 	connectedDeviceId: string | null
 	devices: BleDevice[]
+	carState: CarState
 	onCommandSent: (message: string, success: boolean) => void
+	onStateUpdate: (newState: Partial<CarState>) => void
 }
 
-type ControlType = 'relay' | 'steering' | 'seat_driver' | 'seat_passenger'
-type CommandAction = 'on' | 'off'
+const CarControls: React.FC<CarControlsProps> = ({ connectedDeviceId, devices, carState, onCommandSent, onStateUpdate }) => {
+	// Используем Record<ControlType, boolean> для отслеживания загрузки по каждому типу устройства
+	const [isLoading, setIsLoading] = useState<Record<ControlType, boolean>>({
+		relay: false,
+		steering: false,
+		seat_driver_heat: false,
+		seat_driver_vent: false,
+		seat_passenger_heat: false,
+		seat_passenger_vent: false
+	})
 
-const CarControls: React.FC<CarControlsProps> = ({ connectedDeviceId, devices, onCommandSent }) => {
-	const [isSending, setIsSending] = useState<Record<string, boolean>>({})
 	const fadeAnim = useRef(new Animated.Value(0)).current
-
 	const deviceInfo = devices.find(d => d.id === connectedDeviceId)
 
 	useEffect(() => {
 		if (connectedDeviceId) {
-			Animated.timing(fadeAnim, {
-				toValue: 1,
-				duration: 300,
-				useNativeDriver: true
-			}).start()
+			Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start()
 		} else {
-			Animated.timing(fadeAnim, {
-				toValue: 0,
-				duration: 200,
-				useNativeDriver: true
-			}).start()
+			Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start()
 		}
 	}, [connectedDeviceId])
 
-	// ✅ Функция отправки команды (МОК — позже заменить на реальный BLE write)
-	const sendCommand = async (type: ControlType, action: CommandAction) => {
-		if (!connectedDeviceId || isSending[`${type}_${action}`]) return
+	const toggleFeature = async (type: ControlType) => {
+		if (!connectedDeviceId || isLoading[type]) return
 
-		const key = `${type}_${action}`
-		setIsSending(prev => ({ ...prev, [key]: true }))
+		setIsLoading(prev => ({ ...prev, [type]: true }))
 
 		try {
-			// 🔹 МОК-КОМАНДА: имитация задержки сети
-			await new Promise(res => setTimeout(res, 400))
+			// Текущее состояние берем из props
+			const isCurrentlyOn = getIsOn(type, carState)
+			const targetState = !isCurrentlyOn // То, к чему стремимся
 
-			// 🔹 Здесь позже будет реальный код для ESP32:
-			/*
-			const bleManager = new BleManager();
-			const device = await bleManager.connectToDevice(connectedDeviceId);
-			const service = await device.discoverAllServicesAndCharacteristics();
-			const characteristic = service.characteristics.find(
-				c => c.uuid.toLowerCase() === 'YOUR_CHARACTERISTIC_UUID'
-			);
-			const command = `${type.toUpperCase()}:${action.toUpperCase()}`;
-			await characteristic?.writeWithResponse(Buffer.from(command).toString('base64'));
-			*/
+			console.log(`🔄 Переключение ${type}: ${isCurrentlyOn ? 'ON->OFF' : 'OFF->ON'}`)
 
-			// Сообщения для Toast
-			const messages: Record<string, string> = {
-				relay_on: '✅ Запуск двигателя...',
-				relay_off: '✅ Остановка двигателя...',
-				steering_on: '🔥 Подогрев руля ВКЛЮЧЕН',
-				steering_off: '❄️ Подогрев руля ВЫКЛЮЧЕН',
-				seat_driver_on: '🔥 Подогрев сиденья водителя ВКЛЮЧЕН',
-				seat_driver_off: '❄️ Подогрев сиденья водителя ВЫКЛЮЧЕН',
-				seat_passenger_on: '🔥 Подогрев сиденья пассажира ВКЛЮЧЕН',
-				seat_passenger_off: '❄️ Подогрев сиденья пассажира ВЫКЛЮЧЕН'
+			// Имитация задержки
+			await new Promise(res => setTimeout(res, 600))
+
+			const newState: Partial<CarState> = {}
+			let toastMessage = ''
+
+			if (targetState) {
+				// --- ВКЛЮЧЕНИЕ ---
+				switch (type) {
+					case 'relay':
+						newState.relay = true
+						toastMessage = '✅ Двигатель ЗАПУЩЕН'
+						break
+					case 'steering':
+						newState.steering = true
+						toastMessage = ' Подогрев руля ВКЛ'
+						break
+					case 'seat_driver_heat':
+						newState.seat_driver_heat = true
+						newState.seat_driver_vent = false // Гасим вентиляцию
+						toastMessage = ' Подогрев водителя ВКЛ (Вент. выкл.)'
+						break
+					case 'seat_driver_vent':
+						newState.seat_driver_vent = true
+						newState.seat_driver_heat = false // Гасим подогрев
+						toastMessage = '💨 Вентиляция водителя ВКЛ (Подгрев выкл.)'
+						break
+					case 'seat_passenger_heat':
+						newState.seat_passenger_heat = true
+						newState.seat_passenger_vent = false
+						toastMessage = '🔥 Подогрев пассажира ВКЛ (Вент. выкл.)'
+						break
+					case 'seat_passenger_vent':
+						newState.seat_passenger_vent = true
+						newState.seat_passenger_heat = false
+						toastMessage = '💨 Вентиляция пассажира ВКЛ (Подгрев выкл.)'
+						break
+				}
+			} else {
+				// --- ВЫКЛЮЧЕНИЕ ---
+				switch (type) {
+					case 'relay':
+						newState.relay = false
+						toastMessage = '✅ Двигатель ОСТАНОВЛЕН'
+						break
+					case 'steering':
+						newState.steering = false
+						toastMessage = '️ Подогрев руля ВЫКЛ'
+						break
+					case 'seat_driver_heat':
+						newState.seat_driver_heat = false
+						toastMessage = '❄️ Подогрев водителя ВЫКЛ'
+						break
+					case 'seat_driver_vent':
+						newState.seat_driver_vent = false
+						toastMessage = '⏹ Вентиляция водителя ВЫКЛ'
+						break
+					case 'seat_passenger_heat':
+						newState.seat_passenger_heat = false
+						toastMessage = '❄️ Подогрев пассажира ВЫКЛ'
+						break
+					case 'seat_passenger_vent':
+						newState.seat_passenger_vent = false
+						toastMessage = ' Вентиляция пассажира ВЫКЛ'
+						break
+				}
 			}
 
-			onCommandSent(messages[key] || 'Команда отправлена', true)
+			onStateUpdate(newState)
+			onCommandSent(toastMessage, true)
 		} catch (error) {
-			console.error('Ошибка отправки команды:', error)
-			onCommandSent('❌ Не удалось отправить команду', false)
+			console.error('Ошибка:', error)
+			onCommandSent('❌ Нет ответа от ESP32', false)
 		} finally {
-			setIsSending(prev => ({ ...prev, [key]: false }))
+			// Снимаем блокировку с этого типа устройства
+			setIsLoading(prev => ({ ...prev, [type]: false }))
+		}
+	}
+
+	// Вспомогательная функция для получения текущего состояния
+	const getIsOn = (type: ControlType, state: CarState): boolean => {
+		switch (type) {
+			case 'relay':
+				return state.relay
+			case 'steering':
+				return state.steering
+			case 'seat_driver_heat':
+				return state.seat_driver_heat
+			case 'seat_driver_vent':
+				return state.seat_driver_vent
+			case 'seat_passenger_heat':
+				return state.seat_passenger_heat
+			case 'seat_passenger_vent':
+				return state.seat_passenger_vent
+			default:
+				return false
 		}
 	}
 
@@ -82,116 +148,140 @@ const CarControls: React.FC<CarControlsProps> = ({ connectedDeviceId, devices, o
 
 	return (
 		<Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-			<Text style={styles.title}>Управление: {deviceInfo?.name || 'Устройство'}</Text>
+			<Text style={styles.title}>Управление: {deviceInfo?.name || 'ESP32-C6'}</Text>
 
-			{/* 🔑 Двигатель */}
+			{/* 🚗 Двигатель */}
 			<View style={styles.section}>
 				<Text style={styles.sectionTitle}>Двигатель</Text>
-				<View style={styles.buttonRow}>
-					<ControlButton
-						title='Запуск'
-						icon='🔑'
-						color='#4CAF50'
-						onPress={() => sendCommand('relay', 'on')}
-						disabled={isSending['relay_on']}
-						loading={isSending['relay_on']}
-					/>
-					<ControlButton
-						title='Стоп'
-						icon='⏹'
-						color='#F44336'
-						onPress={() => sendCommand('relay', 'off')}
-						disabled={isSending['relay_off']}
-						loading={isSending['relay_off']}
-					/>
-				</View>
+				<ToggleBtn
+					label={carState.relay ? 'Остановить' : 'Запустить'}
+					iconOn='🛑'
+					iconOff='🔑'
+					isActive={carState.relay}
+					colorOn='#F44336'
+					colorOff='#4CAF50'
+					loading={isLoading.relay}
+					onPress={() => toggleFeature('relay')}
+				/>
+				{carState.relay && <Text style={styles.statusActive}>🟢 Двигатель работает</Text>}
 			</View>
 
-			{/* 🎛️ Подогрев руля */}
+			{/* ️ Подогрев руля */}
 			<View style={styles.section}>
 				<Text style={styles.sectionTitle}>Подогрев руля</Text>
-				<View style={styles.buttonRow}>
-					<ControlButton
-						title='Вкл'
-						icon='🔥'
-						color='#FF9800'
-						onPress={() => sendCommand('steering', 'on')}
-						disabled={isSending['steering_on']}
-						loading={isSending['steering_on']}
-					/>
-					<ControlButton
-						title='Выкл'
-						icon='❄️'
-						color='#9E9E9E'
-						onPress={() => sendCommand('steering', 'off')}
-						disabled={isSending['steering_off']}
-						loading={isSending['steering_off']}
-					/>
-				</View>
+				<ToggleBtn
+					label={carState.steering ? 'Выключить' : 'Включить'}
+					iconOn='️'
+					iconOff=''
+					isActive={carState.steering}
+					colorOn='#FF9800'
+					colorOff='#E0E0E0'
+					loading={isLoading.steering}
+					onPress={() => toggleFeature('steering')}
+				/>
+				{carState.steering && <Text style={styles.statusActive}> Руль нагревается</Text>}
 			</View>
 
-			{/* 🪑 Сиденье водителя */}
+			{/* 🪑 Сиденье ВОДИТЕЛЯ */}
 			<View style={styles.section}>
 				<Text style={styles.sectionTitle}>Сиденье водителя</Text>
-				<View style={styles.buttonRow}>
-					<ControlButton
-						title='Вкл'
-						icon='🔥'
-						color='#FF9800'
-						onPress={() => sendCommand('seat_driver', 'on')}
-						disabled={isSending['seat_driver_on']}
-						loading={isSending['seat_driver_on']}
+				<View style={styles.rowTwoCols}>
+					<ToggleBtn
+						label={carState.seat_driver_heat ? 'Выкл. Подогрев' : 'Вкл. Подогрев'}
+						iconOn='❄️'
+						iconOff='🔥'
+						isActive={carState.seat_driver_heat}
+						colorOn='#FF9800'
+						colorOff='#E0E0E0'
+						loading={isLoading.seat_driver_heat}
+						onPress={() => toggleFeature('seat_driver_heat')}
 					/>
-					<ControlButton
-						title='Выкл'
-						icon='❄️'
-						color='#9E9E9E'
-						onPress={() => sendCommand('seat_driver', 'off')}
-						disabled={isSending['seat_driver_off']}
-						loading={isSending['seat_driver_off']}
+					<ToggleBtn
+						label={carState.seat_driver_vent ? 'Выкл. Вент.' : 'Вкл. Вент.'}
+						iconOn=''
+						iconOff='💨'
+						isActive={carState.seat_driver_vent}
+						colorOn='#03A9F4'
+						colorOff='#E0E0E0'
+						loading={isLoading.seat_driver_vent}
+						onPress={() => toggleFeature('seat_driver_vent')}
 					/>
 				</View>
+				{carState.seat_driver_heat && <Text style={styles.statusActiveHeat}> Подогрев активен</Text>}
+				{carState.seat_driver_vent && <Text style={styles.statusActiveVent}>💨 Вентиляция активна</Text>}
 			</View>
 
-			{/* 🪑 Сиденье пассажира */}
+			{/*  Сиденье ПАССАЖИРА */}
 			<View style={styles.section}>
 				<Text style={styles.sectionTitle}>Сиденье пассажира</Text>
-				<View style={styles.buttonRow}>
-					<ControlButton
-						title='Вкл'
-						icon='🔥'
-						color='#FF9800'
-						onPress={() => sendCommand('seat_passenger', 'on')}
-						disabled={isSending['seat_passenger_on']}
-						loading={isSending['seat_passenger_on']}
+				<View style={styles.rowTwoCols}>
+					<ToggleBtn
+						label={carState.seat_passenger_heat ? 'Выкл. Подогрев' : 'Вкл. Подогрев'}
+						iconOn=''
+						iconOff='🔥'
+						isActive={carState.seat_passenger_heat}
+						colorOn='#FF9800'
+						colorOff='#E0E0E0'
+						loading={isLoading.seat_passenger_heat}
+						onPress={() => toggleFeature('seat_passenger_heat')}
 					/>
-					<ControlButton
-						title='Выкл'
-						icon='❄️'
-						color='#9E9E9E'
-						onPress={() => sendCommand('seat_passenger', 'off')}
-						disabled={isSending['seat_passenger_off']}
-						loading={isSending['seat_passenger_off']}
+					<ToggleBtn
+						label={carState.seat_passenger_vent ? 'Выкл. Вент.' : 'Вкл. Вент.'}
+						iconOn='⏹'
+						iconOff='💨'
+						isActive={carState.seat_passenger_vent}
+						colorOn='#03A9F4'
+						colorOff='#E0E0E0'
+						loading={isLoading.seat_passenger_vent}
+						onPress={() => toggleFeature('seat_passenger_vent')}
 					/>
 				</View>
+				{carState.seat_passenger_heat && <Text style={styles.statusActiveHeat}> Подогрев активен</Text>}
+				{carState.seat_passenger_vent && <Text style={styles.statusActiveVent}>💨 Вентиляция активна</Text>}
 			</View>
 		</Animated.View>
 	)
 }
 
-// 🔘 Компонент кнопки управления
-const ControlButton: React.FC<ControlButtonProps> = ({ title, icon, color, onPress, disabled, loading }) => (
-	<TouchableOpacity style={[styles.controlBtn, { backgroundColor: disabled ? '#E0E0E0' : color }]} onPress={onPress} disabled={disabled}>
-		{loading ? (
-			<Text style={styles.btnLoading}>⏳</Text>
-		) : (
-			<>
-				<Text style={styles.btnIcon}>{icon}</Text>
-				<Text style={styles.btnText}>{title}</Text>
-			</>
-		)}
-	</TouchableOpacity>
-)
+//  Компонент кнопки
+interface ToggleBtnProps {
+	label: string
+	iconOn: string
+	iconOff: string
+	isActive: boolean
+	colorOn: string
+	colorOff: string
+	loading?: boolean
+	disabled?: boolean
+	onPress: () => void
+}
+
+const ToggleBtn: React.FC<ToggleBtnProps> = ({ label, iconOn, iconOff, isActive, colorOn, colorOff, loading, disabled, onPress }) => {
+	return (
+		<TouchableOpacity
+			style={[
+				styles.toggleBtn,
+				{
+					backgroundColor: disabled ? '#F5F5F5' : isActive ? colorOn : colorOff,
+					borderColor: isActive ? colorOn : '#ccc',
+					opacity: disabled || loading ? 0.7 : 1
+				}
+			]}
+			onPress={onPress}
+			disabled={disabled || loading}
+		>
+			{loading ? (
+				<Text style={styles.btnLoading}></Text>
+			) : (
+				<>
+					<Text style={styles.btnIcon}>{isActive ? iconOn : iconOff}</Text>
+					<Text style={[styles.btnText, { color: isActive ? '#fff' : '#333' }]}>{isActive ? 'Выкл' : 'Вкл'}</Text>
+					<Text style={[styles.btnLabel, { color: isActive ? '#fff' : '#666' }]}>{label}</Text>
+				</>
+			)}
+		</TouchableOpacity>
+	)
+}
 
 const styles = StyleSheet.create({
 	container: {
@@ -224,31 +314,57 @@ const styles = StyleSheet.create({
 		color: '#666',
 		marginBottom: 8
 	},
-	buttonRow: {
+	rowTwoCols: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		gap: 12
+		gap: 10
 	},
-	controlBtn: {
+	toggleBtn: {
 		flex: 1,
 		paddingVertical: 12,
+		paddingHorizontal: 8,
 		borderRadius: 8,
 		alignItems: 'center',
-		flexDirection: 'row',
-		justifyContent: 'center',
-		gap: 6
+		borderWidth: 1,
+		minHeight: 60,
+		justifyContent: 'center'
 	},
 	btnIcon: {
-		fontSize: 16
+		fontSize: 20,
+		marginBottom: 4
 	},
 	btnText: {
-		color: '#fff',
 		fontSize: 14,
-		fontWeight: '600'
+		fontWeight: 'bold',
+		marginBottom: 2
+	},
+	btnLabel: {
+		fontSize: 10,
+		textAlign: 'center'
 	},
 	btnLoading: {
-		color: '#fff',
-		fontSize: 16
+		fontSize: 20
+	},
+	statusActive: {
+		marginTop: 6,
+		fontSize: 12,
+		color: '#4CAF50',
+		fontWeight: 'bold',
+		textAlign: 'center'
+	},
+	statusActiveHeat: {
+		marginTop: 6,
+		fontSize: 12,
+		color: '#FF9800',
+		fontWeight: 'bold',
+		textAlign: 'center'
+	},
+	statusActiveVent: {
+		marginTop: 6,
+		fontSize: 12,
+		color: '#03A9F4',
+		fontWeight: 'bold',
+		textAlign: 'center'
 	}
 })
 
