@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Modal } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import Slider from '@react-native-community/slider'
 
@@ -21,8 +20,12 @@ const COLORS = [
 	{ name: 'Белый', value: '#FFFFFF' }
 ]
 
-export default function AmbientLightScreen() {
-	const navigation = useNavigation()
+interface AmbientLightScreenProps {
+	visible: boolean
+	onClose: () => void
+}
+
+export default function AmbientLightScreen({ visible, onClose }: AmbientLightScreenProps) {
 	const { carState, sendCommand } = useCarState()
 
 	const [selectedColor, setSelectedColor] = useState<string>('#FF0000')
@@ -36,6 +39,8 @@ export default function AmbientLightScreen() {
 	}, [carState.ambientColor, carState.ambientBrightness])
 
 	const isEngineOn = carState.relay // Двигатель включен
+
+	if (!visible) return null
 
 	const handleSetColor = async (color: string) => {
 		if (!isEngineOn) {
@@ -90,15 +95,16 @@ export default function AmbientLightScreen() {
 	}
 
 	return (
-		<SafeAreaView style={styles.container}>
-			{/* Заголовок */}
-			<View style={styles.header}>
-				<TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-					<Ionicons name='arrow-back' size={24} color='#333' />
-				</TouchableOpacity>
-				<Text style={styles.title}>Атмосферная подсветка</Text>
-				<View style={{ width: 24 }} /> {/* Пустое место для центровки */}
-			</View>
+		<Modal visible={visible} animationType="slide" transparent={true}>
+			<SafeAreaView style={styles.container}>
+				{/* Заголовок */}
+				<View style={styles.header}>
+					<TouchableOpacity onPress={onClose} style={styles.backButton}>
+						<Ionicons name='arrow-back' size={24} color='#333' />
+					</TouchableOpacity>
+					<Text style={styles.title}>Атмосферная подсветка</Text>
+					<View style={{ width: 24 }} /> {/* Пустое место для центровки */}
+				</View>
 
 			<ScrollView contentContainerStyle={styles.content}>
 				{/* Индикатор состояния двигателя */}
@@ -169,6 +175,7 @@ export default function AmbientLightScreen() {
 				</View>
 			</ScrollView>
 		</SafeAreaView>
+		</Modal>
 	)
 }
 

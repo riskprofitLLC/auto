@@ -3,9 +3,10 @@ import { View, StyleSheet, SafeAreaView, Text } from 'react-native'
 import Toast from '../components/Toast'
 import CarControls from '../components/CarControls'
 import TopBar from '../components/TopBar'
-import TopToolbar from '../components/TopToolbar' // ✅ Импорт новой панели
+import TopToolbar from '../components/TopToolbar'
 import DeviceScanner from '../components/DeviceScanner'
 import TirePressureMonitor from '../components/TirePressureMonitor'
+import AmbientLightScreen from '../screens/AmbientLightScreen'
 import { useBluetooth } from '../hooks/useBluetooth'
 import { ToastState } from '../types/bluetooth'
 import { CarState, TirePressure } from '../types/car'
@@ -20,6 +21,7 @@ export default function App() {
 
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const [isTpmsOpen, setIsTpmsOpen] = useState(false)
+	const [isAmbientLightOpen, setIsAmbientLightOpen] = useState(false)
 
 	const [carState, setCarState] = useState<CarState>({
 		relay: false,
@@ -112,7 +114,7 @@ export default function App() {
 			<TopBar connectedDeviceName={connectedDeviceName} carState={carState} onMenuPress={() => setIsMenuOpen(true)} />
 
 			{/* 2. Панель инструментов (Шины, Настройки) */}
-			{connectedDeviceId && <TopToolbar onTpmsPress={() => setIsTpmsOpen(true)} />}
+			{connectedDeviceId && <TopToolbar onTpmsPress={() => setIsTpmsOpen(true)} onAmbientLightPress={() => setIsAmbientLightOpen(true)} />}
 
 			{/* 3. Основной контент */}
 			<View style={styles.mainContent}>
@@ -149,6 +151,8 @@ export default function App() {
 			/>
 
 			<TirePressureMonitor visible={isTpmsOpen} onClose={() => setIsTpmsOpen(false)} pressure={tirePressure} />
+
+				<AmbientLightScreen visible={isAmbientLightOpen} onClose={() => setIsAmbientLightOpen(false)} />
 
 			<Toast message={toast.message} visible={toast.visible} type={toast.type} />
 		</SafeAreaView>

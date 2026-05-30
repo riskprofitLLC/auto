@@ -64,6 +64,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 		// Блокируем отправку команды, но НЕ меняем состояние carState (оно сохраняется в памяти)
 		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
 			onCommandSent('⚠️ Двигатель выключен. Запустите двигатель для использования климата и BSM.', false);
+			// Сразу разблокируем кнопку, так как команда не была отправлена
 			return;
 		}
 
