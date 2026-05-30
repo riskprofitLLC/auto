@@ -201,14 +201,14 @@ const CarControls: React.FC<CarControlsProps> = ({
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Руль</Text>
 							<ToggleBtn
-								label={carState.steering ? "Выкл" : "Вкл"}
-								icon={carState.steering ? "❄️" : "🔥"}
-								isActive={carState.steering}
+								label={carState.steering && !isClimateLocked ? "Выкл" : "Вкл"}
+								icon={carState.steering && !isClimateLocked ? "❄️" : "🔥"}
+								isActive={carState.steering && !isClimateLocked}
 								colorActive="#FF9800"
 								colorInactive="#E0E0E0"
 								loading={isSending.steering}
+								disabled={isClimateLocked}
 								onPress={() => toggleFeature('steering')}
-								// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 							/>
 						</View>
 
@@ -234,24 +234,24 @@ const CarControls: React.FC<CarControlsProps> = ({
 								<ToggleBtn
 									label="Подогрев"
 									icon="🔥"
-									isActive={carState.seat_driver_heat}
+									isActive={carState.seat_driver_heat && !isClimateLocked}
 									colorActive="#FF9800"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_driver_heat}
+									disabled={isClimateLocked}
 									onPress={() => toggleFeature('seat_driver_heat')}
 									small
-									// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 								/>
 								<ToggleBtn
 									label="Вент."
 									icon="💨"
-									isActive={carState.seat_driver_vent}
+									isActive={carState.seat_driver_vent && !isClimateLocked}
 									colorActive="#03A9F4"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_driver_vent}
+									disabled={isClimateLocked}
 									onPress={() => toggleFeature('seat_driver_vent')}
 									small
-									// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 								/>
 							</View>
 						</View>
@@ -263,24 +263,24 @@ const CarControls: React.FC<CarControlsProps> = ({
 								<ToggleBtn
 									label="Подогрев"
 									icon="🔥"
-									isActive={carState.seat_passenger_heat}
+									isActive={carState.seat_passenger_heat && !isClimateLocked}
 									colorActive="#FF9800"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_passenger_heat}
+									disabled={isClimateLocked}
 									onPress={() => toggleFeature('seat_passenger_heat')}
 									small
-									// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 								/>
 								<ToggleBtn
 									label="Вент."
 									icon="💨"
-									isActive={carState.seat_passenger_vent}
+									isActive={carState.seat_passenger_vent && !isClimateLocked}
 									colorActive="#03A9F4"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_passenger_vent}
+									disabled={isClimateLocked}
 									onPress={() => toggleFeature('seat_passenger_vent')}
 									small
-									// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 								/>
 							</View>
 						</View>
