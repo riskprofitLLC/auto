@@ -220,7 +220,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 								colorActive="#FF9800"
 								colorInactive="#E0E0E0"
 								loading={isSending.steering}
-								disabled={isClimateLocked}
+								disabled={false}
 								onPress={() => toggleFeature('steering')}
 							/>
 						</View>
@@ -251,7 +251,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 									colorActive="#FF9800"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_driver_heat}
-									disabled={isClimateLocked}
+									disabled={false}
 									onPress={() => toggleFeature('seat_driver_heat')}
 									small
 								/>
@@ -262,14 +262,14 @@ const CarControls: React.FC<CarControlsProps> = ({
 									colorActive="#03A9F4"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_driver_vent}
-									disabled={isClimateLocked}
+									disabled={false}
 									onPress={() => toggleFeature('seat_driver_vent')}
 									small
 								/>
 							</View>
 						</View>
 
-						{/* 4. Сиденье Пассажира */}
+					{/* 4. Сиденье Пассажира */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Пассажир</Text>
 							<View style={styles.miniGrid}>
@@ -280,7 +280,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 									colorActive="#FF9800"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_passenger_heat}
-									disabled={isClimateLocked}
+									disabled={false}
 									onPress={() => toggleFeature('seat_passenger_heat')}
 									small
 								/>
@@ -291,7 +291,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 									colorActive="#03A9F4"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_passenger_vent}
-									disabled={isClimateLocked}
+									disabled={false}
 									onPress={() => toggleFeature('seat_passenger_vent')}
 									small
 								/>
