@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView } from 'react-native';
 import { BleDevice } from '../types/bluetooth';
 import { CarState, ControlType } from '../types/car';
 
@@ -61,7 +61,8 @@ const CarControls: React.FC<CarControlsProps> = ({
 
 		// 2. Проверка безопасности: климат только при работающем двигателе
 		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
-			Alert.alert('Двигатель выключен', 'Запустите двигатель для использования климат-контроля.');
+			const message = '⚠️ Двигатель выключен. Запустите двигатель для использования климата.';
+			onCommandSent(message, false);
 			return;
 		}
 
