@@ -60,16 +60,10 @@ const CarControls: React.FC<CarControlsProps> = ({
 		}
 
 		// 2. Проверка безопасности: климат только при работающем двигателе
-		// Но разрешаем ВЫКЛЮЧИТЬ климат, если он уже включен
 		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
-			const isCurrentlyOn = getIsOn(type, carState);
-			// Если пытаемся включить (targetState будет true) при выключенном двигателе - блокируем
-			if (!isCurrentlyOn) {
-				const message = '⚠️ Двигатель выключен. Запустите двигатель для использования климата.';
-				onCommandSent(message, false);
-				return;
-			}
-			// Если пытаемся выключить - разрешаем продолжить
+			const message = '⚠️ Двигатель выключен. Запустите двигатель для использования климата.';
+			onCommandSent(message, false);
+			return;
 		}
 
 		// 3. СБРОС любого существующего таймера для этой кнопки перед новой операцией
