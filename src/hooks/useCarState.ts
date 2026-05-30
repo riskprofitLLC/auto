@@ -43,12 +43,19 @@ export const useCarState = () => {
 		return !carState.relay
 	}, [carState.relay])
 
+	// Отправка команды (заглушка для реальной реализации)
+	const sendCommand = useCallback((command: string, payload?: any) => {
+		console.log(`Sending command: ${command}`, payload)
+		// Здесь должна быть логика отправки команды на устройство
+	}, [])
+
 	return {
 		carState,
 		resetState,
 		updateState,
 		getIsOn,
 		isEngineRunning,
-		isClimateLocked
+		isClimateLocked,
+		sendCommand
 	}
 }
