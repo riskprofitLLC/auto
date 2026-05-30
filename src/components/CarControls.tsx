@@ -228,7 +228,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 								colorActive="#4CAF50"
 								colorInactive="#E0E0E0"
 								loading={isSending.bsm}
-								disabled={isClimateLocked}
+								disabled={false}
 								onPress={() => toggleFeature('bsm')}
 							/>
 						</View>
