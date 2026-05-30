@@ -47,9 +47,8 @@ const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPres
 
 			{/* Кнопка: Атмосферная подсветка */}
 			{onAmbientLightPress && (
-				<TouchableOpacity style={styles.toolBtn} onPress={onAmbientLightPress}>
+				<TouchableOpacity style={styles.toolBtnIcon} onPress={onAmbientLightPress}>
 					<Text style={styles.icon}>💡</Text>
-					<Text style={styles.label}>Свет</Text>
 				</TouchableOpacity>
 			)}
 
@@ -98,9 +97,23 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: '#E0E0E0'
 	},
+	toolBtnIcon: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#FFFFFF',
+		width: 36,
+		height: 36,
+		borderRadius: 18,
+		shadowColor: '#000',
+		shadowOpacity: 0.05,
+		shadowRadius: 4,
+		shadowOffset: { width: 0, height: 2 },
+		elevation: 2,
+		borderWidth: 1,
+		borderColor: '#E0E0E0'
+	},
 	icon: {
-		fontSize: 16,
-		marginRight: 5
+		fontSize: 16
 	},
 	label: {
 		fontSize: 13,

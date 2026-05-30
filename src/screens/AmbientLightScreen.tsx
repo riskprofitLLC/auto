@@ -103,7 +103,7 @@ export default function AmbientLightScreen({ visible, onClose }: AmbientLightScr
 						<Ionicons name='arrow-back' size={24} color='#333' />
 					</TouchableOpacity>
 					<Text style={styles.title}>Атмосферная подсветка</Text>
-					<View style={{ width: 24 }} /> {/* Пустое место для центровки */}
+					<View style={{ width: 24 }} />
 				</View>
 
 			<ScrollView contentContainerStyle={styles.content}>
