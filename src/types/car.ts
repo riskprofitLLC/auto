@@ -7,7 +7,8 @@ export type ControlType =
 	| 'seat_driver_vent'
 	| 'seat_passenger_heat'
 	| 'seat_passenger_vent'
-	| 'trunk';
+	| 'trunk'
+	| 'bsm';
 
 export type CommandAction = 'on' | 'off';
 
@@ -15,6 +16,7 @@ export interface CarState {
 	relay: boolean;
 	trunk: boolean;
 	steering: boolean;
+	bsm: boolean;
 
 	seat_driver_heat: boolean;
 	seat_driver_vent: boolean;
