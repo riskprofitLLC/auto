@@ -9,7 +9,10 @@ const initialState: CarState = {
 	seat_driver_heat: false,
 	seat_driver_vent: false,
 	seat_passenger_heat: false,
-	seat_passenger_vent: false
+	seat_passenger_vent: false,
+	ambientEnabled: false,
+	ambientColor: '#FF0000',
+	ambientBrightness: 50
 }
 
 export const useCarState = () => {
