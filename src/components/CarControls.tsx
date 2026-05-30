@@ -60,10 +60,10 @@ const CarControls: React.FC<CarControlsProps> = ({
 			return;
 		}
 
-		// 2. Проверка безопасности: климат только при работающем двигателе
+		// 2. Проверка безопасности: климат и BSM только при работающем двигателе
 		// Блокируем отправку команды, но НЕ меняем состояние carState (оно сохраняется в памяти)
-		if (!carState.relay && type !== 'relay' && type !== 'trunk' && type !== 'bsm') {
-			onCommandSent('⚠️ Двигатель выключен. Запустите двигатель для использования климата.', false);
+		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
+			onCommandSent('⚠️ Двигатель выключен. Запустите двигатель для использования климата и BSM.', false);
 			return;
 		}
 
@@ -220,13 +220,13 @@ const CarControls: React.FC<CarControlsProps> = ({
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>BSM</Text>
 							<ToggleBtn
-								label={carState.bsm && !isClimateLocked ? "Выкл" : "Вкл"}
-								icon={carState.bsm && !isClimateLocked ? "🚗" : "📡"}
-								isActive={carState.bsm && !isClimateLocked}
+								label={carState.bsm ? "Выкл" : "Вкл"}
+								icon={carState.bsm ? "🚗" : "📡"}
+								isActive={carState.bsm}
 								colorActive="#4CAF50"
 								colorInactive="#E0E0E0"
 								loading={isSending.bsm}
-								disabled={false}
+								disabled={isClimateLocked}
 								onPress={() => toggleFeature('bsm')}
 							/>
 						</View>
