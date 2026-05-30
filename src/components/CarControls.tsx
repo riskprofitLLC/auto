@@ -208,7 +208,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 								colorInactive="#E0E0E0"
 								loading={isSending.steering}
 								onPress={() => toggleFeature('steering')}
-								disabled={isClimateLocked}
+								// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 							/>
 						</View>
 
@@ -240,7 +240,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 									loading={isSending.seat_driver_heat}
 									onPress={() => toggleFeature('seat_driver_heat')}
 									small
-									disabled={isClimateLocked}
+									// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 								/>
 								<ToggleBtn
 									label="Вент."
@@ -251,7 +251,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 									loading={isSending.seat_driver_vent}
 									onPress={() => toggleFeature('seat_driver_vent')}
 									small
-									disabled={isClimateLocked}
+									// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 								/>
 							</View>
 						</View>
@@ -269,7 +269,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 									loading={isSending.seat_passenger_heat}
 									onPress={() => toggleFeature('seat_passenger_heat')}
 									small
-									disabled={isClimateLocked}
+									// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 								/>
 								<ToggleBtn
 									label="Вент."
@@ -280,7 +280,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 									loading={isSending.seat_passenger_vent}
 									onPress={() => toggleFeature('seat_passenger_vent')}
 									small
-									disabled={isClimateLocked}
+									// Убрано disabled={isClimateLocked} - проверка будет внутри toggleFeature
 								/>
 							</View>
 						</View>
