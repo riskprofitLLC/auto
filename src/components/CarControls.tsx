@@ -29,21 +29,8 @@ const CarControls: React.FC<CarControlsProps> = ({
 		seat_passenger_vent: false,
 	});
 
-	const [toastMessage, setToastMessage] = useState<string | null>(null);
 	const fadeAnim = useRef(new Animated.Value(0)).current;
 	const deviceInfo = devices.find(d => d.id === connectedDeviceId);
-
-	// Таймер для скрытия toast-сообщения
-	useEffect(() => {
-		if (toastMessage) {
-			console.log(`🍞 Toast показан: ${toastMessage}`);
-			const timer = setTimeout(() => {
-				console.log(`🍞 Toast скрыт`);
-				setToastMessage(null);
-			}, 5000);
-			return () => clearTimeout(timer);
-		}
-	}, [toastMessage]);
 
 	// Таймеры для аварийного сброса блокировки кнопок
 	const timersRef = useRef<Record<ControlType, ReturnType<typeof setTimeout> | null>>({
@@ -75,7 +62,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 		// 2. Проверка безопасности: климат только при работающем двигателе
 		// Блокируем отправку команды, но НЕ меняем состояние carState (оно сохраняется в памяти)
 		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
-			setToastMessage('⚠️ Двигатель выключен. Запустите двигатель для использования климата.');
+			onCommandSent('⚠️ Двигатель выключен. Запустите двигатель для использования климата.', false);
 			return;
 		}
 
@@ -302,13 +289,6 @@ const CarControls: React.FC<CarControlsProps> = ({
 				</View>
 
 			</ScrollView>
-
-				{/* Toast сообщение */}
-				{toastMessage && (
-					<View style={styles.toastContainer}>
-						<Text style={styles.toastText}>{toastMessage}</Text>
-					</View>
-				)}
 		</Animated.View>
 	);
 };
@@ -403,14 +383,6 @@ const styles = StyleSheet.create({
 	statusActive: {
 		marginTop: 12, fontSize: 14, color: '#4CAF50', fontWeight: 'bold', textAlign: 'center',
 		backgroundColor: '#E8F5E9', paddingVertical: 6, borderRadius: 8,
-	},
-	toastContainer: {
-		position: 'absolute', bottom: 30, left: 20, right: 20,
-		backgroundColor: 'rgba(0, 0, 0, 0.85)', borderRadius: 12, padding: 16,
-		alignItems: 'center', justifyContent: 'center',
-	},
-	toastText: {
-		color: '#fff', fontSize: 15, fontWeight: '600', textAlign: 'center',
 	},
 });
 
