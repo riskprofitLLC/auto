@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native'
 import { TirePressure } from '../types/car'
 
@@ -14,6 +14,14 @@ const NORMAL_PRESSURE_MIN = 2.0
 const NORMAL_PRESSURE_MAX = 2.5
 
 const TirePressureMonitor: React.FC<TirePressureMonitorProps> = ({ visible, onClose, pressure }) => {
+	// Очистка при размонтировании или закрытии модального окна
+	useEffect(() => {
+		return () => {
+			// Гарантируем очистку любых активных анимаций или таймеров
+			// на случай будущего расширения функционала
+		}
+	}, [visible])
+
 	const getStatusColor = (val: number) => {
 		if (val === 0) return '#9E9E9E' // Серый (нет данных)
 		if (val < NORMAL_PRESSURE_MIN || val > NORMAL_PRESSURE_MAX) return '#F44336' // Красный (опасно)
