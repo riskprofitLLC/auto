@@ -23,6 +23,11 @@ export interface CarState {
 
 	seat_passenger_heat: boolean;
 	seat_passenger_vent: boolean;
+
+	// Атмосферная подсветка
+	ambientEnabled: boolean;
+	ambientColor: string;
+	ambientBrightness: number;
 }
 
 // ✅ Новый интерфейс для давления в шинах
