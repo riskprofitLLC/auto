@@ -19,7 +19,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 																									 onStateUpdate
 																								 }) => {
 	// Используем Record<string, boolean> для отслеживания загрузки каждой кнопки отдельно
-	const [isSending, setIsSending] = useState<Record<ControlType, boolean>>({
+	const [isSending, setIsSending] = useState<Record<ControlType | 'bsm', boolean>>({
 		relay: false,
 		trunk: false,
 		steering: false,
@@ -27,15 +27,16 @@ const CarControls: React.FC<CarControlsProps> = ({
 		seat_driver_vent: false,
 		seat_passenger_heat: false,
 		seat_passenger_vent: false,
+		bsm: false,
 	});
 
 	const fadeAnim = useRef(new Animated.Value(0)).current;
 	const deviceInfo = devices.find(d => d.id === connectedDeviceId);
 
 	// Таймеры для аварийного сброса блокировки кнопок
-	const timersRef = useRef<Record<ControlType, ReturnType<typeof setTimeout> | null>>({
+	const timersRef = useRef<Record<ControlType | 'bsm', ReturnType<typeof setTimeout> | null>>({
 		relay: null, trunk: null, steering: null, seat_driver_heat: null,
-		seat_driver_vent: null, seat_passenger_heat: null, seat_passenger_vent: null,
+		seat_driver_vent: null, seat_passenger_heat: null, seat_passenger_vent: null, bsm: null,
 	});
 
 	useEffect(() => {
@@ -61,7 +62,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 
 		// 2. Проверка безопасности: климат только при работающем двигателе
 		// Блокируем отправку команды, но НЕ меняем состояние carState (оно сохраняется в памяти)
-		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
+		if (!carState.relay && type !== 'relay' && type !== 'trunk' && type !== 'bsm') {
 			onCommandSent('⚠️ Двигатель выключен. Запустите двигатель для использования климата.', false);
 			return;
 		}
@@ -101,6 +102,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 				switch (type) {
 					case 'relay': newState.relay = true; message = '✅ Двигатель ЗАПУЩЕН'; break;
 					case 'trunk': newState.trunk = true; message = '📦 Багажник ОТКРЫТ'; break;
+					case 'bsm': newState.bsm = true; message = '🚗 BSM ВКЛ'; break;
 					case 'steering': newState.steering = true; message = '🔥 Подогрев руля ВКЛ'; break;
 					case 'seat_driver_heat': newState.seat_driver_heat = true; newState.seat_driver_vent = false; message = '🔥 Подогрев водителя ВКЛ'; break;
 					case 'seat_driver_vent': newState.seat_driver_vent = true; newState.seat_driver_heat = false; message = '💨 Вентиляция водителя ВКЛ'; break;
@@ -111,6 +113,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 				switch (type) {
 					case 'relay': newState.relay = false; message = '✅ Двигатель ОСТАНОВЛЕН'; break;
 					case 'trunk': newState.trunk = false; message = '🔒 Багажник ЗАКРЫТ'; break;
+					case 'bsm': newState.bsm = false; message = '🚗 BSM ВЫКЛ'; break;
 					case 'steering': newState.steering = false; message = '❄️ Подогрев руля ВЫКЛ'; break;
 					case 'seat_driver_heat': newState.seat_driver_heat = false; message = '❄️ Подогрев водителя ВЫКЛ'; break;
 					case 'seat_driver_vent': newState.seat_driver_vent = false; message = '⏹ Вентиляция водителя ВЫКЛ'; break;
@@ -143,10 +146,11 @@ const CarControls: React.FC<CarControlsProps> = ({
 		}
 	};
 
-	const getIsOn = (type: ControlType, state: CarState): boolean => {
+	const getIsOn = (type: ControlType | 'bsm', state: CarState): boolean => {
 		switch (type) {
 			case 'relay': return state.relay;
 			case 'trunk': return state.trunk;
+			case 'bsm': return state.bsm;
 			case 'steering': return state.steering;
 			case 'seat_driver_heat': return state.seat_driver_heat;
 			case 'seat_driver_vent': return state.seat_driver_vent;
@@ -197,21 +201,6 @@ const CarControls: React.FC<CarControlsProps> = ({
 
 					<View style={styles.grid}>
 
-						{/* 1. Руль */}
-						<View style={styles.cardSmall}>
-							<Text style={styles.cardTitle}>Руль</Text>
-							<ToggleBtn
-								label={carState.steering && !isClimateLocked ? "Выкл" : "Вкл"}
-								icon={carState.steering && !isClimateLocked ? "❄️" : "🔥"}
-								isActive={carState.steering && !isClimateLocked}
-								colorActive="#FF9800"
-								colorInactive="#E0E0E0"
-								loading={isSending.steering}
-								disabled={false}
-								onPress={() => toggleFeature('steering')}
-							/>
-						</View>
-
 						{/* 2. Багажник (ВСЕГДА АКТИВЕН) */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Багажник</Text>
@@ -227,7 +216,37 @@ const CarControls: React.FC<CarControlsProps> = ({
 							/>
 						</View>
 
-						{/* 3. Сиденье Водителя */}
+						{/* 3. BSM (мониторинг слепых зон) */}
+						<View style={styles.cardSmall}>
+							<Text style={styles.cardTitle}>BSM</Text>
+							<ToggleBtn
+								label={carState.bsm && !isClimateLocked ? "Выкл" : "Вкл"}
+								icon={carState.bsm && !isClimateLocked ? "🚗" : "📡"}
+								isActive={carState.bsm && !isClimateLocked}
+								colorActive="#4CAF50"
+								colorInactive="#E0E0E0"
+								loading={isSending.bsm}
+								disabled={false}
+								onPress={() => toggleFeature('bsm')}
+							/>
+						</View>
+
+						{/* 4. Руль */}
+						<View style={styles.cardSmall}>
+							<Text style={styles.cardTitle}>Руль</Text>
+							<ToggleBtn
+								label={carState.steering && !isClimateLocked ? "Выкл" : "Вкл"}
+								icon={carState.steering && !isClimateLocked ? "❄️" : "🔥"}
+								isActive={carState.steering && !isClimateLocked}
+								colorActive="#FF9800"
+								colorInactive="#E0E0E0"
+								loading={isSending.steering}
+								disabled={false}
+								onPress={() => toggleFeature('steering')}
+							/>
+						</View>
+
+						{/* 5. Сиденье Водителя */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Водитель</Text>
 							<View style={styles.miniGrid}>
@@ -256,7 +275,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 							</View>
 						</View>
 
-					{/* 4. Сиденье Пассажира */}
+					{/* 6. Сиденье Пассажира */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Пассажир</Text>
 							<View style={styles.miniGrid}>
