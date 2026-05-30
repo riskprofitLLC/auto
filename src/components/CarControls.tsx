@@ -29,8 +29,19 @@ const CarControls: React.FC<CarControlsProps> = ({
 		seat_passenger_vent: false,
 	});
 
+	const [toastMessage, setToastMessage] = useState<string | null>(null);
 	const fadeAnim = useRef(new Animated.Value(0)).current;
 	const deviceInfo = devices.find(d => d.id === connectedDeviceId);
+
+	// Таймер для скрытия toast-сообщения
+	useEffect(() => {
+		if (toastMessage) {
+			const timer = setTimeout(() => {
+				setToastMessage(null);
+			}, 5000);
+			return () => clearTimeout(timer);
+		}
+	}, [toastMessage]);
 
 	// Таймеры для аварийного сброса блокировки кнопок
 	const timersRef = useRef<Record<ControlType, ReturnType<typeof setTimeout> | null>>({
@@ -62,8 +73,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 		// 2. Проверка безопасности: климат только при работающем двигателе
 		// Блокируем отправку команды, но НЕ меняем состояние carState (оно сохраняется в памяти)
 		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
-			const message = '⚠️ Двигатель выключен. Запустите двигатель для использования климата.';
-			onCommandSent(message, false);
+			setToastMessage('⚠️ Двигатель выключен. Запустите двигатель для использования климата.');
 			return;
 		}
 
@@ -96,32 +106,32 @@ const CarControls: React.FC<CarControlsProps> = ({
 			await new Promise(res => setTimeout(res, 200));
 
 			const newState: Partial<CarState> = {};
-			let toastMessage = '';
+			let message = '';
 
 			if (targetState) {
 				switch (type) {
-					case 'relay': newState.relay = true; toastMessage = '✅ Двигатель ЗАПУЩЕН'; break;
-					case 'trunk': newState.trunk = true; toastMessage = '📦 Багажник ОТКРЫТ'; break;
-					case 'steering': newState.steering = true; toastMessage = '🔥 Подогрев руля ВКЛ'; break;
-					case 'seat_driver_heat': newState.seat_driver_heat = true; newState.seat_driver_vent = false; toastMessage = '🔥 Подогрев водителя ВКЛ'; break;
-					case 'seat_driver_vent': newState.seat_driver_vent = true; newState.seat_driver_heat = false; toastMessage = '💨 Вентиляция водителя ВКЛ'; break;
-					case 'seat_passenger_heat': newState.seat_passenger_heat = true; newState.seat_passenger_vent = false; toastMessage = '🔥 Подогрев пассажира ВКЛ'; break;
-					case 'seat_passenger_vent': newState.seat_passenger_vent = true; newState.seat_passenger_heat = false; toastMessage = '💨 Вентиляция пассажира ВКЛ'; break;
+					case 'relay': newState.relay = true; message = '✅ Двигатель ЗАПУЩЕН'; break;
+					case 'trunk': newState.trunk = true; message = '📦 Багажник ОТКРЫТ'; break;
+					case 'steering': newState.steering = true; message = '🔥 Подогрев руля ВКЛ'; break;
+					case 'seat_driver_heat': newState.seat_driver_heat = true; newState.seat_driver_vent = false; message = '🔥 Подогрев водителя ВКЛ'; break;
+					case 'seat_driver_vent': newState.seat_driver_vent = true; newState.seat_driver_heat = false; message = '💨 Вентиляция водителя ВКЛ'; break;
+					case 'seat_passenger_heat': newState.seat_passenger_heat = true; newState.seat_passenger_vent = false; message = '🔥 Подогрев пассажира ВКЛ'; break;
+					case 'seat_passenger_vent': newState.seat_passenger_vent = true; newState.seat_passenger_heat = false; message = '💨 Вентиляция пассажира ВКЛ'; break;
 				}
 			} else {
 				switch (type) {
-					case 'relay': newState.relay = false; toastMessage = '✅ Двигатель ОСТАНОВЛЕН'; break;
-					case 'trunk': newState.trunk = false; toastMessage = '🔒 Багажник ЗАКРЫТ'; break;
-					case 'steering': newState.steering = false; toastMessage = '❄️ Подогрев руля ВЫКЛ'; break;
-					case 'seat_driver_heat': newState.seat_driver_heat = false; toastMessage = '❄️ Подогрев водителя ВЫКЛ'; break;
-					case 'seat_driver_vent': newState.seat_driver_vent = false; toastMessage = '⏹ Вентиляция водителя ВЫКЛ'; break;
-					case 'seat_passenger_heat': newState.seat_passenger_heat = false; toastMessage = '❄️ Подогрев пассажира ВЫКЛ'; break;
-					case 'seat_passenger_vent': newState.seat_passenger_vent = false; toastMessage = '⏹ Вентиляция пассажира ВЫКЛ'; break;
+					case 'relay': newState.relay = false; message = '✅ Двигатель ОСТАНОВЛЕН'; break;
+					case 'trunk': newState.trunk = false; message = '🔒 Багажник ЗАКРЫТ'; break;
+					case 'steering': newState.steering = false; message = '❄️ Подогрев руля ВЫКЛ'; break;
+					case 'seat_driver_heat': newState.seat_driver_heat = false; message = '❄️ Подогрев водителя ВЫКЛ'; break;
+					case 'seat_driver_vent': newState.seat_driver_vent = false; message = '⏹ Вентиляция водителя ВЫКЛ'; break;
+					case 'seat_passenger_heat': newState.seat_passenger_heat = false; message = '❄️ Подогрев пассажира ВЫКЛ'; break;
+					case 'seat_passenger_vent': newState.seat_passenger_vent = false; message = '⏹ Вентиляция пассажира ВЫКЛ'; break;
 				}
 			}
 
 			onStateUpdate(newState);
-			onCommandSent(toastMessage, true);
+			onCommandSent(message, true);
 
 		} catch (error) {
 			console.error('Ошибка отправки:', error);
@@ -290,6 +300,13 @@ const CarControls: React.FC<CarControlsProps> = ({
 				</View>
 
 			</ScrollView>
+
+				{/* Toast сообщение */}
+				{toastMessage && (
+					<View style={styles.toastContainer}>
+						<Text style={styles.toastText}>{toastMessage}</Text>
+					</View>
+				)}
 		</Animated.View>
 	);
 };
@@ -384,6 +401,14 @@ const styles = StyleSheet.create({
 	statusActive: {
 		marginTop: 12, fontSize: 14, color: '#4CAF50', fontWeight: 'bold', textAlign: 'center',
 		backgroundColor: '#E8F5E9', paddingVertical: 6, borderRadius: 8,
+	},
+	toastContainer: {
+		position: 'absolute', bottom: 30, left: 20, right: 20,
+		backgroundColor: 'rgba(0, 0, 0, 0.85)', borderRadius: 12, padding: 16,
+		alignItems: 'center', justifyContent: 'center',
+	},
+	toastText: {
+		color: '#fff', fontSize: 15, fontWeight: '600', textAlign: 'center',
 	},
 });
 
