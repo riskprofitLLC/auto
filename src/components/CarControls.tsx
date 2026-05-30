@@ -53,8 +53,9 @@ const CarControls: React.FC<CarControlsProps> = ({
 
 	const toggleFeature = async (type: ControlType) => {
 		// 1. Если уже идет отправка для ЭТОЙ конкретной кнопки, игнорируем нажатие
+		// Это предотвращает создание нескольких параллельных операций для одной кнопки
 		if (!connectedDeviceId || isSending[type]) {
-			console.log(`Игнорирование нажатия ${type}, так как isSending[${type}] = true`);
+			console.log(`⛔ Игнорирование повторного нажатия ${type}, операция уже выполняется`);
 			return;
 		}
 
@@ -64,14 +65,22 @@ const CarControls: React.FC<CarControlsProps> = ({
 			return;
 		}
 
-		// 3. Блокируем кнопку
+		// 3. СБРОС любого существующего таймера для этой кнопки перед новой операцией
+		// Это гарантирует, что старые таймеры не сработают после новой операции
+		if (timersRef.current[type]) {
+			clearTimeout(timersRef.current[type]!);
+			timersRef.current[type] = null;
+			console.log(`🔄 Сброс старого таймера для ${type}`);
+		}
+
+		// 4. Блокируем кнопку
 		setIsSending(prev => ({ ...prev, [type]: true }));
 		console.log(`🔒 Блокировка кнопки: ${type}`);
 
-		// 4. Таймаут безопасности (3 секунды). Если ESP32 молчит, разблокируем кнопку.
-		if (timersRef.current[type]) clearTimeout(timersRef.current[type]!);
+		// 5. Таймаут безопасности (3 секунды). Если ESP32 молчит, разблокируем кнопку.
 		timersRef.current[type] = setTimeout(() => {
 			console.warn(`⚠️ Таймаут операции ${type}. Принудительная разблокировка.`);
+			timersRef.current[type] = null;
 			setIsSending(prev => ({ ...prev, [type]: false }));
 		}, 3000);
 
@@ -116,7 +125,8 @@ const CarControls: React.FC<CarControlsProps> = ({
 			console.error('Ошибка отправки:', error);
 			onCommandSent('❌ Нет ответа от ESP32', false);
 		} finally {
-			// 5. ГАРАНТИРОВАННАЯ РАЗБЛОКИРОВКА
+			// 6. ГАРАНТИРОВАННАЯ РАЗБЛОКИРОВКА
+			// Очищаем таймер и сбрасываем флаг блокировки
 			if (timersRef.current[type]) {
 				clearTimeout(timersRef.current[type]!);
 				timersRef.current[type] = null;
