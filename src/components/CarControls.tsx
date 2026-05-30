@@ -62,7 +62,8 @@ const CarControls: React.FC<CarControlsProps> = ({
 
 		// 2. Проверка безопасности: климат и BSM только при работающем двигателе
 		// Блокируем отправку команды, но НЕ меняем состояние carState (оно сохраняется в памяти)
-		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
+		const climateAndBsmTypes: (ControlType | 'bsm')[] = ['steering', 'seat_driver_heat', 'seat_driver_vent', 'seat_passenger_heat', 'seat_passenger_vent', 'bsm'];
+		if (!carState.relay && climateAndBsmTypes.includes(type)) {
 			onCommandSent('⚠️ Двигатель выключен. Запустите двигатель для использования климата и BSM.', false);
 			// Сразу разблокируем кнопку, так как команда не была отправлена
 			return;

@@ -38,19 +38,11 @@ export default function AmbientLightScreen({ visible, onClose }: AmbientLightScr
 		if (carState.ambientBrightness !== undefined) setBrightness(carState.ambientBrightness)
 	}, [carState.ambientColor, carState.ambientBrightness])
 
-	const isEngineOn = carState.relay // Двигатель включен
-
 	if (!visible) return null
 
 	const handleSetColor = async (color: string) => {
-		if (!isEngineOn) {
-			Alert.alert('Двигатель выключен', 'Запустите двигатель для изменения подсветки.')
-			return
-		}
-
 		setIsSending(true)
 		try {
-			// Пример команды, замените на реальную логику отправки
 			await sendCommand('ambient_color', color)
 			setSelectedColor(color)
 		} catch (error) {
@@ -62,13 +54,7 @@ export default function AmbientLightScreen({ visible, onClose }: AmbientLightScr
 	}
 
 	const handleSetBrightness = async (value: number) => {
-		if (!isEngineOn) {
-			// Слайдер лучше блокировать визуально или игнорировать изменения
-			return
-		}
-
 		setBrightness(value)
-		// Дебаунс можно добавить здесь, если нужно
 		try {
 			await sendCommand('ambient_brightness', Math.round(value))
 		} catch (error) {
@@ -77,11 +63,6 @@ export default function AmbientLightScreen({ visible, onClose }: AmbientLightScr
 	}
 
 	const toggleAmbient = async () => {
-		if (!isEngineOn) {
-			Alert.alert('Двигатель выключен', 'Запустите двигатель для управления подсветкой.')
-			return
-		}
-
 		setIsSending(true)
 		try {
 			const newState = !carState.ambientEnabled
@@ -107,29 +88,20 @@ export default function AmbientLightScreen({ visible, onClose }: AmbientLightScr
 				</View>
 
 			<ScrollView contentContainerStyle={styles.content}>
-				{/* Индикатор состояния двигателя */}
-				{!isEngineOn && (
-					<View style={styles.warningBox}>
-						<Ionicons name='warning' size={24} color='#FF9800' />
-						<Text style={styles.warningText}>Двигатель выключен. Управление недоступно.</Text>
-					</View>
-				)}
-
 				{/* Визуализация салона */}
-				<View style={[styles.visualizer, { borderColor: isEngineOn ? selectedColor : '#ccc' }]}>
-					<View style={[styles.carOutline, { shadowColor: isEngineOn && carState.ambientEnabled ? selectedColor : 'transparent' }]} />
-					<Text style={styles.visualizerText}>{carState.ambientEnabled && isEngineOn ? 'Включено' : 'Выключено'}</Text>
+				<View style={[styles.visualizer, { borderColor: selectedColor }]}>
+					<View style={[styles.carOutline, { shadowColor: carState.ambientEnabled ? selectedColor : 'transparent' }]} />
+					<Text style={styles.visualizerText}>{carState.ambientEnabled ? 'Включено' : 'Выключено'}</Text>
 				</View>
 
 				{/* Кнопка ВКЛ/ВЫКЛ */}
 				<View style={styles.section}>
 					<Text style={styles.sectionTitle}>Основное управление</Text>
 					<TouchableOpacity
-						style={[styles.toggleButton, { backgroundColor: carState.ambientEnabled && isEngineOn ? '#4CAF50' : '#E0E0E0' }]}
+						style={[styles.toggleButton, { backgroundColor: carState.ambientEnabled ? '#4CAF50' : '#E0E0E0' }]}
 						onPress={toggleAmbient}
-						disabled={!isEngineOn}
 					>
-						<Text style={[styles.toggleButtonText, { color: carState.ambientEnabled && isEngineOn ? '#FFF' : '#757575' }]}>
+						<Text style={[styles.toggleButtonText, { color: carState.ambientEnabled ? '#FFF' : '#757575' }]}>
 							{carState.ambientEnabled ? 'Подсветка ВКЛ' : 'Подсветка ВЫКЛ'}
 						</Text>
 					</TouchableOpacity>
@@ -146,10 +118,8 @@ export default function AmbientLightScreen({ visible, onClose }: AmbientLightScr
 									styles.colorItem,
 									{ backgroundColor: c.value },
 									selectedColor === c.value && styles.colorItemSelected,
-									!isEngineOn && styles.colorItemDisabled
 								]}
 								onPress={() => handleSetColor(c.value)}
-								disabled={!isEngineOn}
 							>
 								{selectedColor === c.value && <Ionicons name='checkmark' size={24} color='#FFF' />}
 							</TouchableOpacity>
@@ -167,10 +137,9 @@ export default function AmbientLightScreen({ visible, onClose }: AmbientLightScr
 						maximumValue={100}
 						value={brightness}
 						onValueChange={handleSetBrightness}
-						disabled={!isEngineOn}
-						minimumTrackTintColor={isEngineOn ? selectedColor : '#ccc'}
+						minimumTrackTintColor={selectedColor}
 						maximumTrackTintColor='#E0E0E0'
-						thumbTintColor={isEngineOn ? selectedColor : '#999'}
+						thumbTintColor={selectedColor}
 					/>
 				</View>
 			</ScrollView>
