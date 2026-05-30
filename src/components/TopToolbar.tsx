@@ -3,9 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-
 
 interface TopToolbarProps {
 	onTpmsPress: () => void
+	onAmbientLightPress?: () => void
 }
 
-const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress }) => {
+const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPress }) => {
 	// Универсальная функция открытия приложений (Яндекс Навигатор / Яндекс Карты)
 	const openExternalApp = async (scheme: string, appName: string, storeId: string): Promise<void> => {
 		try {
@@ -43,6 +44,14 @@ const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress }) => {
 				<Text style={styles.icon}>🛞</Text>
 				<Text style={styles.label}>Шины</Text>
 			</TouchableOpacity>
+
+			{/* Кнопка: Атмосферная подсветка */}
+			{onAmbientLightPress && (
+				<TouchableOpacity style={styles.toolBtn} onPress={onAmbientLightPress}>
+					<Text style={styles.icon}>💡</Text>
+					<Text style={styles.label}>Свет</Text>
+				</TouchableOpacity>
+			)}
 
 			{/* Кнопка: Яндекс Навигатор */}
 			<TouchableOpacity style={styles.toolBtn} onPress={() => openExternalApp('yandexnavi://', 'Яндекс Навигатор', 'ru.yandex.yandexnavi')}>
