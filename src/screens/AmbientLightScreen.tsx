@@ -16,8 +16,7 @@ const COLORS = [
 	{ name: 'Зеленый', value: '#00FF00' },
 	{ name: 'Голубой', value: '#00FFFF' },
 	{ name: 'Синий', value: '#0000FF' },
-	{ name: 'Фиолетовый', value: '#8B00FF' },
-	{ name: 'Белый', value: '#FFFFFF' }
+	{ name: 'Фиолетовый', value: '#8B00FF' }
 ]
 
 interface AmbientLightScreenProps {
