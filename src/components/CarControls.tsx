@@ -60,6 +60,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 		}
 
 		// 2. Проверка безопасности: климат только при работающем двигателе
+		// Блокируем отправку команды, но НЕ меняем состояние carState (оно сохраняется в памяти)
 		if (!carState.relay && type !== 'relay' && type !== 'trunk') {
 			const message = '⚠️ Двигатель выключен. Запустите двигатель для использования климата.';
 			onCommandSent(message, false);
