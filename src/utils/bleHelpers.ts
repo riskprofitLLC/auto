@@ -1,3 +1,5 @@
+import { BleErrorCode } from 'react-native-ble-plx';
+
 export const getBarsCount = (rssi: number): number => {
 	if (rssi >= -50) return 4;
 	if (rssi >= -60) return 3;
@@ -13,7 +15,6 @@ export const getSignalColor = (rssi: number): string => {
 };
 
 export const isBenignDisconnectError = (error: any): boolean => {
-	const { BleErrorCode } = require('react-native-ble-plx');
 	return (
 		error?.errorCode === BleErrorCode.DeviceDisconnected ||
 		error?.errorCode === BleErrorCode.OperationCancelled ||
