@@ -36,7 +36,9 @@ const CarControls: React.FC<CarControlsProps> = ({
 	// Таймер для скрытия toast-сообщения
 	useEffect(() => {
 		if (toastMessage) {
+			console.log(`🍞 Toast показан: ${toastMessage}`);
 			const timer = setTimeout(() => {
+				console.log(`🍞 Toast скрыт`);
 				setToastMessage(null);
 			}, 5000);
 			return () => clearTimeout(timer);
