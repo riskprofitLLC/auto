@@ -6,9 +6,10 @@ interface TopBarProps {
 	connectedDeviceName: string | null;
 	carState: CarState;
 	onMenuPress: () => void;
+	onSettingsPress: () => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ connectedDeviceName, carState, onMenuPress }) => {
+const TopBar: React.FC<TopBarProps> = ({ connectedDeviceName, carState, onMenuPress, onSettingsPress }) => {
 	return (
 		<View style={styles.container}>
 			{/* Левая часть: Меню */}
@@ -28,12 +29,15 @@ const TopBar: React.FC<TopBarProps> = ({ connectedDeviceName, carState, onMenuPr
 				)}
 			</View>
 
-			{/* Правая часть: Индикаторы активности */}
+			{/* Правая часть: Индикаторы активности и Настройки */}
 			<View style={styles.indicators}>
 				{carState.relay && <Text style={styles.indicator}>🟢</Text>}
 				{carState.steering && <Text style={styles.indicator}>🔥</Text>}
 				{(carState.seat_driver_heat || carState.seat_passenger_heat) && <Text style={styles.indicator}>♨️</Text>}
 				{(carState.seat_driver_vent || carState.seat_passenger_vent) && <Text style={styles.indicator}>💨</Text>}
+				<TouchableOpacity onPress={onSettingsPress} style={styles.settingsButton}>
+					<Text style={styles.settingsIcon}>⚙️</Text>
+				</TouchableOpacity>
 			</View>
 		</View>
 	);
@@ -88,10 +92,18 @@ const styles = StyleSheet.create({
 	indicators: {
 		flexDirection: 'row',
 		gap: 4,
+		alignItems: 'center'
 	},
 	indicator: {
 		fontSize: 18,
 	},
+	settingsButton: {
+		padding: 8,
+		marginLeft: 4
+	},
+	settingsIcon: {
+		fontSize: 20,
+	}
 });
 
 export default TopBar;
