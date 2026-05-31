@@ -119,6 +119,10 @@ export default function App() {
 		}
 	}, [])
 
+	const handleSettingsChange = (newSettings: AppSettings) => {
+		setSettings(newSettings);
+	};
+
 	const loadInitialSettings = async () => {
 		try {
 			const loaded = await loadSettings();
@@ -181,7 +185,11 @@ export default function App() {
 			<AmbientLightScreen visible={isAmbientLightOpen} onClose={() => setIsAmbientLightOpen(false)} carState={carState} onStateUpdate={updateCarState} />
 
 				{/* Модальное окно настроек */}
-				<SettingsModal visible={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+				<SettingsModal 
+					visible={isSettingsOpen} 
+					onClose={() => setIsSettingsOpen(false)} 
+					onSettingsChange={handleSettingsChange}
+				/>
 
 			<Toast message={toast.message} visible={toast.visible} type={toast.type} />
 		</SafeAreaView>
