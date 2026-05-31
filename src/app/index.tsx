@@ -7,9 +7,12 @@ import TopToolbar from '../components/TopToolbar'
 import DeviceScanner from '../components/DeviceScanner'
 import TirePressureMonitor from '../components/TirePressureMonitor'
 import AmbientLightScreen from '../screens/AmbientLightScreen'
+import SettingsModal from '../components/SettingsModal'
 import { useBluetooth } from '../hooks/useBluetooth'
 import { ToastState } from '../types/bluetooth'
 import { CarState, TirePressure } from '../types/car'
+import { AppSettings, DEFAULT_SETTINGS } from '../types/settings'
+import { loadSettings } from '../utils/settingsStorage'
 
 export default function App() {
 	const [toast, setToast] = useState<ToastState>({
@@ -22,6 +25,9 @@ export default function App() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const [isTpmsOpen, setIsTpmsOpen] = useState(false)
 	const [isAmbientLightOpen, setIsAmbientLightOpen] = useState(false)
+	const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+	const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS)
 
 	const [carState, setCarState] = useState<CarState>({
 		relay: false,
@@ -107,10 +113,20 @@ export default function App() {
 	}, [connectedDeviceId])
 
 	useEffect(() => {
+		loadInitialSettings();
 		return () => {
 			if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
 		}
 	}, [])
+
+	const loadInitialSettings = async () => {
+		try {
+			const loaded = await loadSettings();
+			setSettings(loaded);
+		} catch (error) {
+			console.error('Failed to load settings:', error);
+		}
+	};
 
 	const updateCarState = (newState: Partial<CarState>) => {
 		setCarState(prev => ({ ...prev, ...newState }))
@@ -119,7 +135,7 @@ export default function App() {
 	return (
 		<SafeAreaView style={styles.container}>
 			{/* 1. Верхняя панель статуса */}
-			<TopBar connectedDeviceName={connectedDeviceName} carState={carState} onMenuPress={() => setIsMenuOpen(true)} />
+			<TopBar connectedDeviceName={connectedDeviceName} carState={carState} onMenuPress={() => setIsMenuOpen(true)} onSettingsPress={() => setIsSettingsOpen(true)} />
 
 			{/* 2. Панель инструментов (Шины, Настройки) */}
 			{connectedDeviceId && <TopToolbar onTpmsPress={() => setIsTpmsOpen(true)} onAmbientLightPress={() => setIsAmbientLightOpen(true)} />}
@@ -162,6 +178,9 @@ export default function App() {
 
 			{/* AmbientLightScreen теперь получает carState и onStateUpdate через props */}
 			<AmbientLightScreen visible={isAmbientLightOpen} onClose={() => setIsAmbientLightOpen(false)} carState={carState} onStateUpdate={updateCarState} />
+
+				{/* Модальное окно настроек */}
+				<SettingsModal visible={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
 
 			<Toast message={toast.message} visible={toast.visible} type={toast.type} />
 		</SafeAreaView>
