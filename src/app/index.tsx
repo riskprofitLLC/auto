@@ -147,6 +147,7 @@ export default function App() {
 						connectedDeviceId={connectedDeviceId}
 						devices={devices}
 						carState={carState}
+						buttonFeedbackMode={settings.buttonFeedbackMode}
 						onStateUpdate={updateCarState}
 						onCommandSent={(message, success) => showToast(message, success ? 'success' : 'error')}
 					/>
