@@ -6,6 +6,7 @@ import { loadSettings, saveSettings } from '../utils/settingsStorage';
 interface SettingsModalProps {
 	visible: boolean;
 	onClose: () => void;
+	onSettingsChange: (newSettings: AppSettings) => void;
 }
 
 const FEEDBACK_OPTIONS: { value: ButtonFeedbackMode; label: string; icon: string }[] = [
@@ -41,6 +42,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }) => {
 		setSettings(newSettings);
 		try {
 			await saveSettings(newSettings);
+			// Уведомляем родительский компонент об изменении настроек
+			if (onSettingsChange) {
+				onSettingsChange(newSettings);
+			}
 		} catch (error) {
 			console.error('Failed to save settings:', error);
 		}
