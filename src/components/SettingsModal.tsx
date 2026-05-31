@@ -15,7 +15,7 @@ const FEEDBACK_OPTIONS: { value: ButtonFeedbackMode; label: string; icon: string
 	{ value: 'none', label: 'Ничего', icon: '🔇' }
 ];
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose }) => {
+const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSettingsChange }) => {
 	const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
 	const [isLoading, setIsLoading] = useState(true);
 
