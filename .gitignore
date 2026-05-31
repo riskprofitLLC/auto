@@ -1,4 +1,4 @@
-```
+```gitignore
 # Dependencies
 node_modules/
 
@@ -7,29 +7,35 @@ dist/
 build/
 target/
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.ENV
+.python-version
+
 # Logs
 *.log
 
 # Environment variables
 .env
 .env.local
-*.env.*
+*.env*
 
 # IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
-*.tmp
 
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-*.egg-info/
+# OS generated files
+.DS_Store
+Thumbs.db
 
 # Coverage reports
 coverage/
@@ -39,13 +45,14 @@ htmlcov/
 # Temporary files
 *.tmp
 *.temp
-*~
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# MyPy cache
+.mypy_cache/
 
-# Compression files
+# PyTest cache
+.pytest_cache/
+
+# Compressed files
 *.zip
 *.gz
 *.tar

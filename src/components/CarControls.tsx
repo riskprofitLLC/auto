@@ -1,23 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Vibration } from 'react-native';
 import { BleDevice } from '../types/bluetooth';
 import { CarState, ControlType } from '../types/car';
+import { ButtonFeedbackMode } from '../types/settings';
 
 interface CarControlsProps {
 	connectedDeviceId: string | null;
 	devices: BleDevice[];
 	carState: CarState;
+	buttonFeedbackMode: ButtonFeedbackMode;
 	onCommandSent: (message: string, success: boolean) => void;
 	onStateUpdate: (newState: Partial<CarState>) => void;
 }
 
 const CarControls: React.FC<CarControlsProps> = ({
-																									 connectedDeviceId,
-																									 devices,
-																									 carState,
-																									 onCommandSent,
-																									 onStateUpdate
-																								 }) => {
+	connectedDeviceId,
+	devices,
+	carState,
+	buttonFeedbackMode,
+	onCommandSent,
+	onStateUpdate
+}) => {
 	// Используем Record<string, boolean> для отслеживания загрузки каждой кнопки отдельно
 	const [isSending, setIsSending] = useState<Record<ControlType | 'bsm', boolean>>({
 		relay: false,
@@ -53,6 +56,16 @@ const CarControls: React.FC<CarControlsProps> = ({
 	}, [connectedDeviceId]);
 
 	const toggleFeature = async (type: ControlType) => {
+		// 0. Применяем обратную связь (вибрация/звук) при нажатии
+		if (buttonFeedbackMode === 'vibration') {
+			Vibration.vibrate(10); // Короткая вибрация 10мс
+		} else if (buttonFeedbackMode === 'sound') {
+			// Звуковой сигнал можно добавить позже, если потребуется
+			// Пока просто логгируем
+			console.log('🔊 Звуковой сигнал (будущая функция)');
+		}
+		// 'none' - ничего не делаем
+
 		// 1. Если уже идет отправка для ЭТОЙ конкретной кнопки, игнорируем нажатие
 		// Это предотвращает создание нескольких параллельных операций для одной кнопки
 		if (!connectedDeviceId || isSending[type]) {
