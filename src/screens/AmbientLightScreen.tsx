@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Modal } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Dimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import Slider from '@react-native-community/slider'
-
-// Импортируем типы и хук состояния (предполагая, что они доступны в проекте)
-// В реальном проекте замените на правильный путь импорта
 import { useCarState } from '../hooks/useCarState'
-import { ControlType } from '../types/car'
+
+const { height } = Dimensions.get('window')
 
 const COLORS = [
-	{ name: 'Красный', value: '#FF0000' },
-	{ name: 'Оранжевый', value: '#FF7F00' },
-	{ name: 'Желтый', value: '#FFFF00' },
-	{ name: 'Зеленый', value: '#00FF00' },
-	{ name: 'Голубой', value: '#00FFFF' },
-	{ name: 'Синий', value: '#0000FF' },
-	{ name: 'Фиолетовый', value: '#8B00FF' },
-	{ name: 'Белый', value: '#FFFFFF' }
+	{ name: 'Красный', value: '#FF3B30' },
+	{ name: 'Оранжевый', value: '#FF9500' },
+	{ name: 'Желтый', value: '#FFCC00' },
+	{ name: 'Зеленый', value: '#34C759' },
+	{ name: 'Голубой', value: '#5AC8FA' },
+	{ name: 'Синий', value: '#007AFF' },
+	{ name: 'Фиолетовый', value: '#AF52DE' }
 ]
 
 interface AmbientLightScreenProps {
@@ -28,248 +25,307 @@ interface AmbientLightScreenProps {
 export default function AmbientLightScreen({ visible, onClose }: AmbientLightScreenProps) {
 	const { carState, sendCommand } = useCarState()
 
-	const [selectedColor, setSelectedColor] = useState<string>('#FF0000')
-	const [brightness, setBrightness] = useState<number>(50)
+	// Локальные состояния для мгновенного отклика UI
+	const [selectedColor, setSelectedColor] = useState('#FF3B30')
+	const [brightness, setBrightness] = useState(50)
+	const [isPowerOn, setIsPowerOn] = useState(false)
 	const [isSending, setIsSending] = useState(false)
 
-	// Инициализация состояния из carState при загрузке
+	// Синхронизация с реальным состоянием машины
 	useEffect(() => {
 		if (carState.ambientColor) setSelectedColor(carState.ambientColor)
 		if (carState.ambientBrightness !== undefined) setBrightness(carState.ambientBrightness)
-	}, [carState.ambientColor, carState.ambientBrightness])
+		if (carState.ambientEnabled !== undefined) setIsPowerOn(carState.ambientEnabled)
+	}, [carState.ambientColor, carState.ambientBrightness, carState.ambientEnabled])
 
 	if (!visible) return null
 
-	const handleSetColor = async (color: string) => {
+	// 🔘 КНОПКА №1: Главный выключатель
+	const toggleMainPower = async () => {
+		const newState = !isPowerOn
+		setIsPowerOn(newState)
 		setIsSending(true)
+
 		try {
-			await sendCommand('ambient_color', color)
-			setSelectedColor(color)
+			await sendCommand('ambient_enabled', newState)
 		} catch (error) {
-			console.error('Ошибка установки цвета:', error)
-			Alert.alert('Ошибка', 'Не удалось изменить цвет')
+			console.error('Ошибка переключения:', error)
+			setIsPowerOn(!newState) // Откат при ошибке
 		} finally {
 			setIsSending(false)
 		}
 	}
 
-	const handleSetBrightness = async (value: number) => {
-		setBrightness(value)
+	// 🔘 КНОПКА №2: Яркость
+	const handleBrightnessChange = async (value: number) => {
 		try {
 			await sendCommand('ambient_brightness', Math.round(value))
 		} catch (error) {
-			console.error('Ошибка установки яркости:', error)
+			console.error(error)
 		}
 	}
 
-	const toggleAmbient = async () => {
+	// 🔘 КНОПКА №3: Цвет
+	const handleColorSelect = async (color: string) => {
+		setSelectedColor(color)
 		setIsSending(true)
 		try {
-			const newState = !carState.ambientEnabled
-			await sendCommand('ambient_enabled', newState)
+			await sendCommand('ambient_color', color)
 		} catch (error) {
-			console.error('Ошибка переключения подсветки:', error)
-			Alert.alert('Ошибка', 'Не удалось переключить подсветку')
+			console.error(error)
 		} finally {
 			setIsSending(false)
 		}
 	}
 
 	return (
-		<Modal visible={visible} animationType="slide" transparent={true}>
-			<SafeAreaView style={styles.container}>
-				{/* Заголовок */}
-				<View style={styles.header}>
-					<TouchableOpacity onPress={onClose} style={styles.backButton}>
-						<Ionicons name='arrow-back' size={24} color='#333' />
-					</TouchableOpacity>
-					<Text style={styles.title}>Атмосферная подсветка</Text>
-					<View style={{ width: 24 }} />
-				</View>
-
-			<ScrollView contentContainerStyle={styles.content}>
-				{/* Визуализация салона */}
-				<View style={[styles.visualizer, { borderColor: selectedColor }]}>
-					<View style={[styles.carOutline, { shadowColor: carState.ambientEnabled ? selectedColor : 'transparent' }]} />
-					<Text style={styles.visualizerText}>{carState.ambientEnabled ? 'Включено' : 'Выключено'}</Text>
-				</View>
-
-				{/* Кнопка ВКЛ/ВЫКЛ */}
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Основное управление</Text>
-					<TouchableOpacity
-						style={[styles.toggleButton, { backgroundColor: carState.ambientEnabled ? '#4CAF50' : '#E0E0E0' }]}
-						onPress={toggleAmbient}
-					>
-						<Text style={[styles.toggleButtonText, { color: carState.ambientEnabled ? '#FFF' : '#757575' }]}>
-							{carState.ambientEnabled ? 'Подсветка ВКЛ' : 'Подсветка ВЫКЛ'}
-						</Text>
-					</TouchableOpacity>
-				</View>
-
-				{/* Выбор цвета */}
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Цвет подсветки</Text>
-					<View style={styles.colorGrid}>
-						{COLORS.map(c => (
-							<TouchableOpacity
-								key={c.value}
-								style={[
-									styles.colorItem,
-									{ backgroundColor: c.value },
-									selectedColor === c.value && styles.colorItemSelected,
-								]}
-								onPress={() => handleSetColor(c.value)}
-							>
-								{selectedColor === c.value && <Ionicons name='checkmark' size={24} color='#FFF' />}
-							</TouchableOpacity>
-						))}
+		<Modal visible={visible} animationType='slide' transparent={true}>
+			<View style={styles.modalContainer}>
+				<View style={styles.overlay} />
+				<SafeAreaView style={styles.sheet}>
+					{/* Заголовок */}
+					<View style={styles.header}>
+						<Text style={styles.title}>Атмосферная подсветка</Text>
+						<TouchableOpacity onPress={onClose} style={styles.closeButton}>
+							<Ionicons name='close' size={28} color='#1C1C1E' />
+						</TouchableOpacity>
 					</View>
-					<Text style={styles.selectedColorText}>Выбран: {COLORS.find(c => c.value === selectedColor)?.name}</Text>
-				</View>
 
-				{/* Регулировка яркости */}
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Яркость: {Math.round(brightness)}%</Text>
-					<Slider
-						style={styles.slider}
-						minimumValue={0}
-						maximumValue={100}
-						value={brightness}
-						onValueChange={handleSetBrightness}
-						minimumTrackTintColor={selectedColor}
-						maximumTrackTintColor='#E0E0E0'
-						thumbTintColor={selectedColor}
-					/>
-				</View>
-			</ScrollView>
-		</SafeAreaView>
+					<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+						{/* 🔘 КНОПКА №1: Главный выключатель */}
+						<View style={styles.mainPowerContainer}>
+							<Text style={styles.mainPowerLabel}>{isPowerOn ? 'Система активна' : 'Система выключена'}</Text>
+
+							<TouchableOpacity
+								style={[styles.mainPowerButton, { backgroundColor: isPowerOn ? selectedColor : '#E5E5EA' }]}
+								onPress={toggleMainPower}
+								activeOpacity={0.8}
+								disabled={isSending}
+							>
+								{isSending ? (
+									<ActivityIndicator size='large' color={isPowerOn ? '#FFF' : '#8E8E93'} />
+								) : (
+									<>
+										<Ionicons name={isPowerOn ? 'power' : 'power'} size={36} color={isPowerOn ? '#FFFFFF' : '#8E8E93'} />
+										<Text style={[styles.mainPowerText, { color: isPowerOn ? '#FFFFFF' : '#8E8E93' }]}>{isPowerOn ? 'ВЫКЛЮЧИТЬ' : 'ВКЛЮЧИТЬ'}</Text>
+									</>
+								)}
+							</TouchableOpacity>
+
+							<View style={[styles.statusIndicator, { backgroundColor: isPowerOn ? '#34C759' : '#FF3B30' }]}>
+								<Text style={styles.statusText}>{isPowerOn ? '● Включено' : '○ Выключено'}</Text>
+							</View>
+						</View>
+
+						{/* 🔘 КНОПКА №2: Яркость */}
+						{isPowerOn && (
+							<View style={styles.controlSection}>
+								<View style={styles.sectionHeader}>
+									<Ionicons name='sunny' size={24} color={selectedColor} />
+									<Text style={styles.sectionTitle}>Яркость</Text>
+									<Text style={styles.brightnessValue}>{Math.round(brightness)}%</Text>
+								</View>
+
+								<View style={styles.sliderContainer}>
+									<Slider
+										style={styles.slider}
+										value={brightness}
+										onValueChange={setBrightness} // Мгновенная отрисовка
+										onSlidingComplete={handleBrightnessChange} // Команда только после отпускания
+										minimumValue={0}
+										maximumValue={100}
+										minimumTrackTintColor={selectedColor}
+										maximumTrackTintColor='#E5E5EA'
+										thumbTintColor={selectedColor}
+									/>
+								</View>
+
+								<View style={styles.presetsRow}>
+									{[25, 50, 75, 100].map(preset => (
+										<TouchableOpacity
+											key={preset}
+											style={[styles.presetButton, Math.round(brightness) === preset && { backgroundColor: selectedColor, borderColor: selectedColor }]}
+											onPress={() => handleBrightnessChange(preset)}
+										>
+											<Text style={[styles.presetText, Math.round(brightness) === preset && { color: '#FFFFFF' }]}>{preset}%</Text>
+										</TouchableOpacity>
+									))}
+								</View>
+							</View>
+						)}
+
+						{/* 🔘 КНОПКА №3: Цвет подсветки */}
+						{isPowerOn && (
+							<View style={styles.controlSection}>
+								<View style={styles.sectionHeader}>
+									<Ionicons name='color-palette' size={24} color={selectedColor} />
+									<Text style={styles.sectionTitle}>Цвет подсветки</Text>
+								</View>
+
+								<View style={styles.colorGrid}>
+									{COLORS.map(color => (
+										<TouchableOpacity
+											key={color.value}
+											style={[styles.colorButton, { backgroundColor: color.value }, selectedColor === color.value && styles.colorButtonSelected]}
+											onPress={() => handleColorSelect(color.value)}
+											activeOpacity={0.7}
+										>
+											{selectedColor === color.value && <Ionicons name='checkmark' size={28} color='#FFFFFF' />}
+										</TouchableOpacity>
+									))}
+								</View>
+
+								<View style={styles.currentColorContainer}>
+									<Text style={styles.currentColorLabel}>Текущий цвет:</Text>
+									<View style={[styles.currentColorBox, { backgroundColor: selectedColor }]}>
+										<Text style={styles.currentColorName}>{COLORS.find(c => c.value === selectedColor)?.name}</Text>
+									</View>
+								</View>
+							</View>
+						)}
+
+						{/* Подсказка при выключенном состоянии */}
+						{!isPowerOn && (
+							<View style={styles.hintContainer}>
+								<Ionicons name='information-circle' size={24} color='#8E8E93' />
+								<Text style={styles.hintText}>Нажмите кнопку "ВКЛЮЧИТЬ" для настройки яркости и цвета</Text>
+							</View>
+						)}
+					</ScrollView>
+				</SafeAreaView>
+			</View>
 		</Modal>
 	)
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#F5F5F5'
+	modalContainer: { flex: 1, backgroundColor: 'rgba(0,0,0,0.2)', justifyContent: 'flex-end' },
+	overlay: { ...StyleSheet.absoluteFill, backgroundColor: 'transparent' },
+	sheet: {
+		backgroundColor: '#FFFFFF',
+		borderTopLeftRadius: 30,
+		borderTopRightRadius: 30,
+		height: height * 0.9,
+		paddingHorizontal: 24,
+		paddingTop: 20
 	},
 	header: {
 		flexDirection: 'row',
-		alignItems: 'center',
 		justifyContent: 'space-between',
-		padding: 16,
-		backgroundColor: '#FFF',
+		alignItems: 'center',
+		marginBottom: 25,
+		paddingBottom: 15,
 		borderBottomWidth: 1,
-		borderBottomColor: '#E0E0E0'
+		borderBottomColor: '#F2F2F7'
 	},
-	backButton: {
-		padding: 4
-	},
-	title: {
-		fontSize: 18,
-		fontWeight: 'bold',
-		color: '#333'
-	},
-	content: {
-		padding: 16
-	},
-	warningBox: {
+	title: { fontSize: 24, fontWeight: '800', color: '#1C1C1E' },
+	closeButton: { padding: 4 },
+	// Кнопка №1
+	mainPowerContainer: { alignItems: 'center', marginBottom: 30 },
+	mainPowerLabel: { fontSize: 16, color: '#8E8E93', marginBottom: 20, fontWeight: '600' },
+	mainPowerButton: {
+		width: '100%',
+		height: 120,
+		borderRadius: 24,
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#FFF3E0',
-		padding: 12,
-		borderRadius: 8,
-		marginBottom: 16,
-		borderWidth: 1,
-		borderColor: '#FFCC80'
-	},
-	warningText: {
-		marginLeft: 8,
-		color: '#E65100',
-		fontWeight: '500'
-	},
-	visualizer: {
-		height: 150,
-		backgroundColor: '#222',
-		borderRadius: 12,
-		marginBottom: 20,
 		justifyContent: 'center',
-		alignItems: 'center',
-		borderWidth: 2,
-		overflow: 'hidden'
-	},
-	carOutline: {
-		width: 100,
-		height: 60,
-		borderRadius: 10,
-		backgroundColor: 'rgba(255,255,255,0.1)',
-		shadowRadius: 20,
-		shadowOpacity: 1
-	},
-	visualizerText: {
-		color: '#FFF',
-		marginTop: 10,
-		fontWeight: 'bold'
-	},
-	section: {
-		backgroundColor: '#FFF',
-		padding: 16,
-		borderRadius: 12,
-		marginBottom: 16,
 		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.1,
-		shadowRadius: 2,
-		elevation: 2
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.2,
+		shadowRadius: 8,
+		elevation: 5
 	},
-	sectionTitle: {
-		fontSize: 16,
-		fontWeight: '600',
-		marginBottom: 12,
-		color: '#333'
+	mainPowerText: { fontSize: 24, fontWeight: 'bold', marginLeft: 12, letterSpacing: 1 },
+	statusIndicator: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingHorizontal: 16,
+		paddingVertical: 8,
+		borderRadius: 20,
+		marginTop: 15
 	},
-	toggleButton: {
-		padding: 16,
-		borderRadius: 8,
+	statusText: { fontSize: 14, fontWeight: '600', color: '#FFF' },
+
+	// Секции управления
+	controlSection: {
+		backgroundColor: '#F2F2F7',
+		borderRadius: 20,
+		padding: 20,
+		marginBottom: 20
+	},
+	sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+	sectionTitle: { fontSize: 18, fontWeight: '700', color: '#1C1C1E', marginLeft: 10, flex: 1 },
+	brightnessValue: { fontSize: 18, fontWeight: 'bold', color: '#1C1C1E' },
+	sliderContainer: { marginBottom: 16 },
+	slider: { width: '100%', height: 40 },
+	presetsRow: { flexDirection: 'row', justifyContent: 'space-between' },
+	presetButton: {
+		flex: 1,
+		height: 40,
+		marginHorizontal: 4,
+		borderRadius: 12,
+		backgroundColor: '#FFFFFF',
+		borderWidth: 2,
+		borderColor: '#E5E5EA',
+		justifyContent: 'center',
 		alignItems: 'center'
 	},
-	toggleButtonText: {
-		fontSize: 16,
-		fontWeight: 'bold'
-	},
-	colorGrid: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		justifyContent: 'space-between'
-	},
-	colorItem: {
-		width: '22%',
+	presetText: { fontSize: 14, fontWeight: '600', color: '#8E8E93' },
+
+	// Цвета
+	colorGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 16 },
+	colorButton: {
+		width: '30%',
 		aspectRatio: 1,
-		borderRadius: 12,
+		borderRadius: 16,
 		marginBottom: 12,
 		justifyContent: 'center',
 		alignItems: 'center',
 		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 1 },
-		shadowOpacity: 0.2,
-		shadowRadius: 2,
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.1,
+		shadowRadius: 4,
 		elevation: 2
 	},
-	colorItemSelected: {
-		borderWidth: 3,
-		borderColor: '#333',
-		transform: [{ scale: 1.05 }]
+	colorButtonSelected: {
+		borderWidth: 4,
+		borderColor: '#FFFFFF',
+		transform: [{ scale: 1.05 }],
+		shadowOpacity: 0.3
 	},
-	colorItemDisabled: {
-		opacity: 0.5
+	currentColorContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		backgroundColor: '#FFFFFF',
+		padding: 12,
+		borderRadius: 12
 	},
-	selectedColorText: {
-		textAlign: 'center',
-		color: '#666',
-		marginTop: 4
+	currentColorLabel: { fontSize: 14, color: '#8E8E93', marginRight: 10 },
+	currentColorBox: {
+		flex: 1,
+		height: 40,
+		borderRadius: 8,
+		justifyContent: 'center',
+		alignItems: 'center'
 	},
-	slider: {
-		width: '100%',
-		height: 40
-	}
+	currentColorName: {
+		fontSize: 16,
+		fontWeight: '700',
+		color: '#FFFFFF',
+		textShadowColor: 'rgba(0,0,0,0.3)',
+		textShadowOffset: { width: 0, height: 1 },
+		textShadowRadius: 2
+	},
+
+	// Подсказка
+	hintContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		backgroundColor: '#F2F2F7',
+		padding: 16,
+		borderRadius: 12,
+		marginTop: 10
+	},
+	hintText: { flex: 1, marginLeft: 10, fontSize: 14, color: '#8E8E93', lineHeight: 20 }
 })
