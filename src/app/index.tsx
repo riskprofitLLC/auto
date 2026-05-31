@@ -27,10 +27,14 @@ export default function App() {
 		relay: false,
 		trunk: false,
 		steering: false,
+		bsm: false,
 		seat_driver_heat: false,
 		seat_driver_vent: false,
 		seat_passenger_heat: false,
-		seat_passenger_vent: false
+		seat_passenger_vent: false,
+		ambientEnabled: false,
+		ambientColor: '#2979FF',
+		ambientBrightness: 50
 	})
 
 	const [tirePressure, setTirePressure] = useState<TirePressure>({
@@ -75,10 +79,14 @@ export default function App() {
 				relay: false,
 				trunk: false,
 				steering: false,
+				bsm: false,
 				seat_driver_heat: false,
 				seat_driver_vent: false,
 				seat_passenger_heat: false,
-				seat_passenger_vent: false
+				seat_passenger_vent: false,
+				ambientEnabled: false,
+				ambientColor: '#2979FF',
+				ambientBrightness: 50
 			})
 			setTirePressure({ frontLeft: 0, frontRight: 0, rearLeft: 0, rearRight: 0 })
 		}
@@ -152,7 +160,8 @@ export default function App() {
 
 			<TirePressureMonitor visible={isTpmsOpen} onClose={() => setIsTpmsOpen(false)} pressure={tirePressure} />
 
-				<AmbientLightScreen visible={isAmbientLightOpen} onClose={() => setIsAmbientLightOpen(false)} />
+			{/* AmbientLightScreen теперь получает carState и onStateUpdate через props */}
+			<AmbientLightScreen visible={isAmbientLightOpen} onClose={() => setIsAmbientLightOpen(false)} carState={carState} onStateUpdate={updateCarState} />
 
 			<Toast message={toast.message} visible={toast.visible} type={toast.type} />
 		</SafeAreaView>
@@ -167,7 +176,7 @@ const styles = StyleSheet.create({
 	mainContent: {
 		flex: 1,
 		padding: 16,
-		paddingTop: 8 // Небольшой отступ от тулбара
+		paddingTop: 8
 	},
 	placeholder: {
 		flex: 1,
