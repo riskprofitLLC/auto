@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
-import { useFeedback } from '../context/FeedbackContext'
+import { useFeedback } from './FeedbackContext'
 
 interface FeedbackButtonProps extends TouchableOpacityProps {
 	children: React.ReactNode
