@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, ScrollView, Vibration } from 'react-native';
+import { View, Text, StyleSheet, Animated, ScrollView } from 'react-native';
 import { BleDevice } from '../types/bluetooth';
 import { CarState, ControlType } from '../types/car';
-import { ButtonFeedbackMode } from '../types/settings';
+import FeedbackButton from './FeedbackButton';
 
 interface CarControlsProps {
 	connectedDeviceId: string | null;
 	devices: BleDevice[];
 	carState: CarState;
-	buttonFeedbackMode: ButtonFeedbackMode;
 	onCommandSent: (message: string, success: boolean) => void;
 	onStateUpdate: (newState: Partial<CarState>) => void;
 }
@@ -17,11 +16,9 @@ const CarControls: React.FC<CarControlsProps> = ({
 	connectedDeviceId,
 	devices,
 	carState,
-	buttonFeedbackMode,
 	onCommandSent,
 	onStateUpdate
 }) => {
-	// Используем Record<string, boolean> для отслеживания загрузки каждой кнопки отдельно
 	const [isSending, setIsSending] = useState<Record<ControlType | 'bsm', boolean>>({
 		relay: false,
 		trunk: false,
@@ -34,9 +31,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 	});
 
 	const fadeAnim = useRef(new Animated.Value(0)).current;
-	const deviceInfo = devices.find(d => d.id === connectedDeviceId);
 
-	// Таймеры для аварийного сброса блокировки кнопок
 	const timersRef = useRef<Record<ControlType | 'bsm', ReturnType<typeof setTimeout> | null>>({
 		relay: null, trunk: null, steering: null, seat_driver_heat: null,
 		seat_driver_vent: null, seat_passenger_heat: null, seat_passenger_vent: null, bsm: null,
@@ -48,53 +43,30 @@ const CarControls: React.FC<CarControlsProps> = ({
 		} else {
 			Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start();
 		}
-
 		return () => {
-			// Очистка всех таймеров при размонтировании
 			Object.values(timersRef.current).forEach(timer => timer && clearTimeout(timer));
 		};
 	}, [connectedDeviceId]);
 
 	const toggleFeature = async (type: ControlType) => {
-		// 0. Применяем обратную связь (вибрация/звук) при нажатии
-		if (buttonFeedbackMode === 'vibration') {
-			Vibration.vibrate(10); // Короткая вибрация 10мс
-		} else if (buttonFeedbackMode === 'sound') {
-			// Звуковой сигнал можно добавить позже, если потребуется
-			// Пока просто логгируем
-			console.log('🔊 Звуковой сигнал (будущая функция)');
-		}
-		// 'none' - ничего не делаем
-
-		// 1. Если уже идет отправка для ЭТОЙ конкретной кнопки, игнорируем нажатие
-		// Это предотвращает создание нескольких параллельных операций для одной кнопки
 		if (!connectedDeviceId || isSending[type]) {
-			console.log(`⛔ Игнорирование повторного нажатия ${type}, операция уже выполняется`);
+			console.log(`⛔ Игнорирование повторного нажатия ${type}`);
 			return;
 		}
 
-		// 2. Проверка безопасности: климат и BSM только при работающем двигателе
-		// Блокируем отправку команды, но НЕ меняем состояние carState (оно сохраняется в памяти)
 		const climateAndBsmTypes: (ControlType | 'bsm')[] = ['steering', 'seat_driver_heat', 'seat_driver_vent', 'seat_passenger_heat', 'seat_passenger_vent', 'bsm'];
 		if (!carState.relay && climateAndBsmTypes.includes(type)) {
 			onCommandSent('⚠️ Двигатель выключен. Запустите двигатель для использования климата и BSM.', false);
-			// Сразу разблокируем кнопку, так как команда не была отправлена
 			return;
 		}
 
-		// 3. СБРОС любого существующего таймера для этой кнопки перед новой операцией
-		// Это гарантирует, что старые таймеры не сработают после новой операции
 		if (timersRef.current[type]) {
 			clearTimeout(timersRef.current[type]!);
 			timersRef.current[type] = null;
-			console.log(`🔄 Сброс старого таймера для ${type}`);
 		}
 
-		// 4. Блокируем кнопку
 		setIsSending(prev => ({ ...prev, [type]: true }));
-		console.log(`🔒 Блокировка кнопки: ${type}`);
 
-		// 5. Таймаут безопасности (3 секунды). Если ESP32 молчит, разблокируем кнопку.
 		timersRef.current[type] = setTimeout(() => {
 			console.warn(`⚠️ Таймаут операции ${type}. Принудительная разблокировка.`);
 			timersRef.current[type] = null;
@@ -105,9 +77,6 @@ const CarControls: React.FC<CarControlsProps> = ({
 			const isCurrentlyOn = getIsOn(type, carState);
 			const targetState = !isCurrentlyOn;
 
-			console.log(`📤 Отправка команды: ${type.toUpperCase()} -> ${targetState ? 'ON' : 'OFF'}`);
-
-			// Имитация задержки сети/ESP32 (200мс для быстрой реакции UI)
 			await new Promise(res => setTimeout(res, 200));
 
 			const newState: Partial<CarState> = {};
@@ -144,16 +113,12 @@ const CarControls: React.FC<CarControlsProps> = ({
 			console.error('Ошибка отправки:', error);
 			onCommandSent('❌ Нет ответа от ESP32', false);
 		} finally {
-			// 6. ГАРАНТИРОВАННАЯ РАЗБЛОКИРОВКА
-			// Очищаем таймер и сбрасываем флаг блокировки
 			if (timersRef.current[type]) {
 				clearTimeout(timersRef.current[type]!);
 				timersRef.current[type] = null;
 			}
 			setIsSending(prev => {
-				// Дополнительная проверка: убедимся, что мы сбрасываем именно эту кнопку
 				if (prev[type]) {
-					console.log(`🔓 Разблокировка кнопки: ${type}`);
 					return { ...prev, [type]: false };
 				}
 				return prev;
@@ -186,7 +151,6 @@ const CarControls: React.FC<CarControlsProps> = ({
 				{/* 🚗 ЗОНА ДВИГАТЕЛЯ */}
 				<View style={styles.sectionCard}>
 					<Text style={styles.sectionTitle}>Силовая установка</Text>
-
 					<View style={styles.engineRow}>
 						<ToggleBtn
 							label={carState.relay ? "Остановить" : "Запустить"}
@@ -194,12 +158,11 @@ const CarControls: React.FC<CarControlsProps> = ({
 							isActive={carState.relay}
 							colorActive="#EF5350"
 							colorInactive="#4CAF50"
-							loading={isSending.relay} // ✅ Прямая передача состояния
+							loading={isSending.relay}
 							onPress={() => toggleFeature('relay')}
 							large
 						/>
 					</View>
-
 					{carState.relay && <Text style={styles.statusActive}>🟢 Двигатель работает</Text>}
 				</View>
 
@@ -215,8 +178,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 					)}
 
 					<View style={styles.grid}>
-
-						{/* 2. Багажник (ВСЕГДА АКТИВЕН) */}
+						{/* Багажник */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Багажник</Text>
 							<ToggleBtn
@@ -225,13 +187,12 @@ const CarControls: React.FC<CarControlsProps> = ({
 								isActive={carState.trunk}
 								colorActive="#9C27B0"
 								colorInactive="#E1BEE7"
-								loading={isSending.trunk} // ✅ Прямая передача состояния
+								loading={isSending.trunk}
 								onPress={() => toggleFeature('trunk')}
-								// Нет disabled={isClimateLocked}
 							/>
 						</View>
 
-						{/* 3. BSM (мониторинг слепых зон) */}
+						{/* BSM */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>BSM</Text>
 							<ToggleBtn
@@ -241,12 +202,11 @@ const CarControls: React.FC<CarControlsProps> = ({
 								colorActive="#4CAF50"
 								colorInactive="#E0E0E0"
 								loading={isSending.bsm}
-								disabled={false}
 								onPress={() => toggleFeature('bsm')}
 							/>
 						</View>
 
-						{/* 4. Руль */}
+						{/* Руль */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Руль</Text>
 							<ToggleBtn
@@ -256,12 +216,11 @@ const CarControls: React.FC<CarControlsProps> = ({
 								colorActive="#FF9800"
 								colorInactive="#E0E0E0"
 								loading={isSending.steering}
-								disabled={false}
 								onPress={() => toggleFeature('steering')}
 							/>
 						</View>
 
-						{/* 5. Сиденье Водителя */}
+						{/* Водитель */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Водитель</Text>
 							<View style={styles.miniGrid}>
@@ -272,7 +231,6 @@ const CarControls: React.FC<CarControlsProps> = ({
 									colorActive="#FF9800"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_driver_heat}
-									disabled={false}
 									onPress={() => toggleFeature('seat_driver_heat')}
 									small
 								/>
@@ -283,14 +241,13 @@ const CarControls: React.FC<CarControlsProps> = ({
 									colorActive="#03A9F4"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_driver_vent}
-									disabled={false}
 									onPress={() => toggleFeature('seat_driver_vent')}
 									small
 								/>
 							</View>
 						</View>
 
-					{/* 6. Сиденье Пассажира */}
+						{/* Пассажир */}
 						<View style={styles.cardSmall}>
 							<Text style={styles.cardTitle}>Пассажир</Text>
 							<View style={styles.miniGrid}>
@@ -301,7 +258,6 @@ const CarControls: React.FC<CarControlsProps> = ({
 									colorActive="#FF9800"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_passenger_heat}
-									disabled={false}
 									onPress={() => toggleFeature('seat_passenger_heat')}
 									small
 								/>
@@ -312,22 +268,19 @@ const CarControls: React.FC<CarControlsProps> = ({
 									colorActive="#03A9F4"
 									colorInactive="#F5F5F5"
 									loading={isSending.seat_passenger_vent}
-									disabled={false}
 									onPress={() => toggleFeature('seat_passenger_vent')}
 									small
 								/>
 							</View>
 						</View>
-
 					</View>
 				</View>
-
 			</ScrollView>
 		</Animated.View>
 	);
 };
 
-// 🔘 Компонент кнопки
+// 🔘 Компонент кнопки с обратной связью
 interface ToggleBtnProps {
 	label: string;
 	icon: string;
@@ -343,8 +296,8 @@ interface ToggleBtnProps {
 }
 
 const ToggleBtn: React.FC<ToggleBtnProps> = ({
-																							 label, icon, isActive, colorActive, colorInactive, loading, disabled, onPress, large, medium, small
-																						 }) => {
+	label, icon, isActive, colorActive, colorInactive, loading, disabled, onPress, large, medium, small
+}) => {
 	const btnStyle = [
 		styles.toggleBtn,
 		large && styles.btnLarge,
@@ -359,10 +312,9 @@ const ToggleBtn: React.FC<ToggleBtnProps> = ({
 	];
 
 	return (
-		<TouchableOpacity
+		<FeedbackButton
 			style={btnStyle}
 			onPress={onPress}
-			// Кнопка заблокирована ТОЛЬКО если идет загрузка ИЛИ она явно отключена (например, климат при выкл двигателе)
 			disabled={!!loading || !!disabled}
 			activeOpacity={0.7}
 		>
@@ -376,7 +328,7 @@ const ToggleBtn: React.FC<ToggleBtnProps> = ({
 					</Text>
 				</>
 			)}
-		</TouchableOpacity>
+		</FeedbackButton>
 	);
 };
 

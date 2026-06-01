@@ -1,13 +1,14 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native'
+import { View, Text, StyleSheet, Linking, Alert } from 'react-native'
+import FeedbackButton from './FeedbackButton'
 
 interface TopToolbarProps {
 	onTpmsPress: () => void
 	onAmbientLightPress?: () => void
+	onSettingsPress?: () => void
 }
 
-const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPress }) => {
-	// Универсальная функция открытия приложений (Яндекс Навигатор / Яндекс Карты)
+const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPress, onSettingsPress }) => {
 	const openExternalApp = async (scheme: string, appName: string, storeId: string): Promise<void> => {
 		try {
 			await Linking.openURL(scheme)
@@ -21,7 +22,6 @@ const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPres
 		}
 	}
 
-	// Отдельная функция для Google Maps (сохраняем вашу оригинальную логику с canOpenURL)
 	const openGoogleMaps = async (): Promise<void> => {
 		const scheme = 'comgooglemaps://'
 		try {
@@ -29,7 +29,6 @@ const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPres
 			if (supported) {
 				await Linking.openURL(scheme)
 			} else {
-				// Если приложение не установлено — открываем веб-версию
 				await Linking.openURL('https://www.google.com/maps')
 			}
 		} catch (error: unknown) {
@@ -40,35 +39,42 @@ const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPres
 	return (
 		<View style={styles.container}>
 			{/* Кнопка: Давление в шинах */}
-			<TouchableOpacity style={styles.toolBtn} onPress={onTpmsPress}>
+			<FeedbackButton style={styles.toolBtn} onPress={onTpmsPress}>
 				<Text style={styles.icon}>🛞</Text>
 				<Text style={styles.label}>Шины</Text>
-			</TouchableOpacity>
+			</FeedbackButton>
 
 			{/* Кнопка: Атмосферная подсветка */}
 			{onAmbientLightPress && (
-				<TouchableOpacity style={styles.toolBtnIcon} onPress={onAmbientLightPress}>
+				<FeedbackButton style={styles.toolBtnIcon} onPress={onAmbientLightPress}>
 					<Text style={styles.icon}>💡</Text>
-				</TouchableOpacity>
+				</FeedbackButton>
 			)}
 
 			{/* Кнопка: Яндекс Навигатор */}
-			<TouchableOpacity style={styles.toolBtn} onPress={() => openExternalApp('yandexnavi://', 'Яндекс Навигатор', 'ru.yandex.yandexnavi')}>
+			<FeedbackButton style={styles.toolBtn} onPress={() => openExternalApp('yandexnavi://', 'Яндекс Навигатор', 'ru.yandex.yandexnavi')}>
 				<Text style={styles.icon}>🧭</Text>
 				<Text style={styles.label}>Навиг.</Text>
-			</TouchableOpacity>
+			</FeedbackButton>
 
 			{/* Кнопка: Яндекс Карты */}
-			<TouchableOpacity style={styles.toolBtn} onPress={() => openExternalApp('yandexmaps://', 'Яндекс Карты', 'ru.yandex.maps')}>
+			<FeedbackButton style={styles.toolBtn} onPress={() => openExternalApp('yandexmaps://', 'Яндекс Карты', 'ru.yandex.maps')}>
 				<Text style={styles.icon}>🗺️</Text>
 				<Text style={styles.label}>Карты</Text>
-			</TouchableOpacity>
+			</FeedbackButton>
 
-			{/* Кнопка: Google Maps (отдельная логика) */}
-			<TouchableOpacity style={styles.toolBtn} onPress={openGoogleMaps}>
+			{/* Кнопка: Google Maps */}
+			<FeedbackButton style={styles.toolBtn} onPress={openGoogleMaps}>
 				<Text style={styles.icon}>🌍</Text>
 				<Text style={styles.label}>Google</Text>
-			</TouchableOpacity>
+			</FeedbackButton>
+
+			{/* Кнопка: Настройки */}
+			{onSettingsPress && (
+				<FeedbackButton style={styles.toolBtnIcon} onPress={onSettingsPress}>
+					<Text style={styles.icon}>⚙️</Text>
+				</FeedbackButton>
+			)}
 		</View>
 	)
 }
