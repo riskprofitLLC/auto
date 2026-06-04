@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Modal, SafeAreaView } from 'react-native'
-import { useFeedback, FeedbackMode } from '../context/FeedbackContext'
+import { useFeedback, FeedbackMode } from './FeedbackContext'
 
 interface SettingsScreenProps {
 	visible: boolean

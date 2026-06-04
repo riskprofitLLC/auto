@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { View, StyleSheet, SafeAreaView, Text } from 'react-native'
 import Toast from '../components/Toast'
+import { useFeedback } from '../components/FeedbackContext'
 import CarControls from '../components/CarControls'
 import TopBar from '../components/TopBar'
 import TopToolbar from '../components/TopToolbar'
@@ -28,6 +29,8 @@ export default function App() {
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
 	const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS)
+
+	const { setMode: setFeedbackMode } = useFeedback()
 
 	const [carState, setCarState] = useState<CarState>({
 		relay: false,
@@ -121,12 +124,14 @@ export default function App() {
 
 	const handleSettingsChange = (newSettings: AppSettings) => {
 		setSettings(newSettings);
+		setFeedbackMode(newSettings.buttonFeedbackMode);
 	};
 
 	const loadInitialSettings = async () => {
 		try {
 			const loaded = await loadSettings();
 			setSettings(loaded);
+			setFeedbackMode(loaded.buttonFeedbackMode);
 		} catch (error) {
 			console.error('Failed to load settings:', error);
 		}
@@ -151,7 +156,6 @@ export default function App() {
 						connectedDeviceId={connectedDeviceId}
 						devices={devices}
 						carState={carState}
-						buttonFeedbackMode={settings.buttonFeedbackMode}
 						onStateUpdate={updateCarState}
 						onCommandSent={(message, success) => showToast(message, success ? 'success' : 'error')}
 					/>

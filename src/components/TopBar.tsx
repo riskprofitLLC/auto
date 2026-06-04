@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import FeedbackButton from './FeedbackButton';
 import { CarState } from '../types/car';
 
 interface TopBarProps {
@@ -13,9 +14,9 @@ const TopBar: React.FC<TopBarProps> = ({ connectedDeviceName, carState, onMenuPr
 	return (
 		<View style={styles.container}>
 			{/* Левая часть: Меню */}
-			<TouchableOpacity onPress={onMenuPress} style={styles.menuButton}>
+			<FeedbackButton onPress={onMenuPress} style={styles.menuButton}>
 				<Text style={styles.menuIcon}>☰</Text>
-			</TouchableOpacity>
+			</FeedbackButton>
 
 			{/* Центр: Статус устройства */}
 			<View style={styles.centerContent}>
@@ -35,9 +36,9 @@ const TopBar: React.FC<TopBarProps> = ({ connectedDeviceName, carState, onMenuPr
 				{carState.steering && <Text style={styles.indicator}>🔥</Text>}
 				{(carState.seat_driver_heat || carState.seat_passenger_heat) && <Text style={styles.indicator}>♨️</Text>}
 				{(carState.seat_driver_vent || carState.seat_passenger_vent) && <Text style={styles.indicator}>💨</Text>}
-				<TouchableOpacity onPress={onSettingsPress} style={styles.settingsButton}>
+				<FeedbackButton onPress={onSettingsPress} style={styles.settingsButton}>
 					<Text style={styles.settingsIcon}>⚙️</Text>
-				</TouchableOpacity>
+				</FeedbackButton>
 			</View>
 		</View>
 	);

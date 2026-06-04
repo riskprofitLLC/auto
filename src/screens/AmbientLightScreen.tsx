@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import Slider from '@react-native-community/slider'
 import { CarState } from '../types/car'
+import FeedbackButton from '../components/FeedbackButton'
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -117,20 +118,20 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 								<Text style={styles.headerEyebrow}>УПРАВЛЕНИЕ</Text>
 								<Text style={styles.headerTitle}>Подсветка</Text>
 							</View>
-							<TouchableOpacity onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
+							<FeedbackButton onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
 								<Ionicons name='close' size={20} color='#fff' />
-							</TouchableOpacity>
+							</FeedbackButton>
 						</View>
 
 						{/* ── Power orb ── */}
 						<View style={styles.orbSection}>
-							<TouchableOpacity onPress={togglePower} activeOpacity={0.85}>
+							<FeedbackButton onPress={togglePower} activeOpacity={0.85}>
 								<Animated.View style={[styles.orbOuter, { transform: [{ scale: pulseAnim }] }, isPowerOn && { borderColor: selectedColor + 'AA' }]}>
 									<View style={[styles.orbInner, { backgroundColor: isPowerOn ? selectedColor : '#1A1A2E' }]}>
 										<Ionicons name='power' size={36} color={isPowerOn ? '#fff' : '#555'} />
 									</View>
 								</Animated.View>
-							</TouchableOpacity>
+							</FeedbackButton>
 							<Text style={[styles.orbLabel, isPowerOn && { color: selectedColor }]}>{isPowerOn ? '● ВКЛЮЧЕНО' : '○ ВЫКЛЮЧЕНО'}</Text>
 						</View>
 
@@ -139,7 +140,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 							<Text style={styles.sectionLabel}>ЦВЕТ</Text>
 							<View style={styles.colorRow}>
 								{COLORS.map(c => (
-									<TouchableOpacity key={c.hex} onPress={() => handleColorSelect(c.hex)} activeOpacity={0.75} style={styles.colorWrap}>
+									<FeedbackButton key={c.hex} onPress={() => handleColorSelect(c.hex)} activeOpacity={0.75} style={styles.colorWrap}>
 										<View
 											style={[
 												styles.colorDot,
@@ -156,7 +157,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 											{selectedColor === c.hex && <Ionicons name='checkmark' size={14} color='#fff' />}
 										</View>
 										<Text style={[styles.colorName, selectedColor === c.hex && { color: c.hex }]}>{c.name}</Text>
-									</TouchableOpacity>
+									</FeedbackButton>
 								))}
 							</View>
 						</View>
@@ -195,7 +196,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 							{/* Quick presets */}
 							<View style={styles.presetsRow}>
 								{[25, 50, 75, 100].map(p => (
-									<TouchableOpacity
+									<FeedbackButton
 										key={p}
 										onPress={() => handleBrightnessChange(p)}
 										style={[
@@ -208,7 +209,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 										activeOpacity={0.7}
 									>
 										<Text style={[styles.presetText, brightness === p && { color: isPowerOn ? selectedColor : '#fff' }]}>{p}%</Text>
-									</TouchableOpacity>
+									</FeedbackButton>
 								))}
 							</View>
 						</View>

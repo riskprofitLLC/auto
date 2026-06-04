@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { AppSettings, ButtonFeedbackMode, DEFAULT_SETTINGS } from '../types/settings';
 import { loadSettings, saveSettings } from '../utils/settingsStorage';
+import FeedbackButton from './FeedbackButton';
 
 interface SettingsModalProps {
 	visible: boolean;
@@ -57,9 +58,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSetti
 				<View style={styles.modalContent}>
 					<View style={styles.header}>
 						<Text style={styles.title}>⚙️ Настройки</Text>
-						<TouchableOpacity onPress={onClose} style={styles.closeButton}>
+						<FeedbackButton onPress={onClose} style={styles.closeButton}>
 							<Text style={styles.closeText}>✕</Text>
-						</TouchableOpacity>
+						</FeedbackButton>
 					</View>
 
 					<ScrollView showsVerticalScrollIndicator={false}>
@@ -75,7 +76,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSetti
 							) : (
 								<View style={styles.optionsContainer}>
 									{FEEDBACK_OPTIONS.map((option) => (
-										<TouchableOpacity
+										<FeedbackButton
 											key={option.value}
 											style={[
 												styles.optionCard,
@@ -101,7 +102,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSetti
 													<Text style={styles.checkmark}>✓</Text>
 												)}
 											</View>
-										</TouchableOpacity>
+										</FeedbackButton>
 									))}
 								</View>
 							)}

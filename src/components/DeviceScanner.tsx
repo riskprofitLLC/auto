@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, FlatList, StyleSheet, Button, Modal, TouchableOpacity } from 'react-native'
 import { BleDevice } from '../types/bluetooth'
 import SignalStrength from './SignalStrength'
+import FeedbackButton from './FeedbackButton'
 
 interface DeviceScannerProps {
 	visible: boolean
@@ -51,20 +52,28 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
 				<View style={styles.modalContent}>
 					<View style={styles.header}>
 						<Text style={styles.title}>Устройства Bluetooth</Text>
-						<TouchableOpacity onPress={onClose} style={styles.closeButton}>
+						<FeedbackButton onPress={onClose} style={styles.closeButton}>
 							<Text style={styles.closeText}>✕</Text>
-						</TouchableOpacity>
+						</FeedbackButton>
 					</View>
 
 					<View style={styles.controls}>
 						{!isScanning && !connectingId ? (
-							<Button title='Начать поиск' onPress={onStartScan} />
+							<FeedbackButton onPress={onStartScan} style={styles.scanBtn}>
+								<Text style={styles.scanBtnText}>Начать поиск</Text>
+							</FeedbackButton>
 						) : connectingId ? (
-							<Button title='Отмена подключения' onPress={() => onCancel(connectingId)} color='#ff4444' />
+							<FeedbackButton onPress={() => onCancel(connectingId)} style={[styles.scanBtn, { backgroundColor: '#ff4444' }]}>
+								<Text style={styles.scanBtnText}>Отмена подключения</Text>
+							</FeedbackButton>
 						) : (
 							<View style={styles.scanButtonsRow}>
-								<Button title='Стоп' onPress={onStopScan} color='#ff4444' />
-								<Button title='Обновить' onPress={onRescan} color='#2196F3' />
+								<FeedbackButton onPress={onStopScan} style={[styles.scanBtn, { backgroundColor: '#ff4444' }]}>
+								<Text style={styles.scanBtnText}>Стоп</Text>
+							</FeedbackButton>
+								<FeedbackButton onPress={onRescan} style={[styles.scanBtn, { backgroundColor: '#2196F3' }]}>
+								<Text style={styles.scanBtnText}>Обновить</Text>
+							</FeedbackButton>
 							</View>
 						)}
 					</View>
@@ -93,11 +102,17 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
 
 									<View style={styles.actions}>
 										{isThisConnected ? (
-											<Button title='Откл.' onPress={() => onDisconnect(item.id)} color='#FF5252' />
+											<FeedbackButton onPress={() => onDisconnect(item.id)} style={[styles.smallBtn, { backgroundColor: '#FF5252' }]}>
+													<Text style={styles.smallBtnText}>Откл.</Text>
+												</FeedbackButton>
 										) : isThisConnecting ? (
-											<Button title='...' disabled color='#999' />
+											<FeedbackButton disabled style={[styles.smallBtn, { backgroundColor: '#999' }]}>
+													<Text style={styles.smallBtnText}>...</Text>
+												</FeedbackButton>
 										) : (
-											<Button title='Подкл.' onPress={() => onConnect(item.id)} disabled={!!connectingId || !!connectedDeviceId} />
+											<FeedbackButton onPress={() => onConnect(item.id)} disabled={!!connectingId || !!connectedDeviceId} style={[styles.smallBtn, { backgroundColor: '#4CAF50' }, (!!connectingId || !!connectedDeviceId) && { opacity: 0.5 }]}>
+													<Text style={styles.smallBtnText}>Подкл.</Text>
+												</FeedbackButton>
 										)}
 									</View>
 								</View>
@@ -203,6 +218,33 @@ const styles = StyleSheet.create({
 	actions: {
 		minWidth: 80,
 		alignItems: 'flex-end'
+	},
+	scanBtn: {
+		paddingVertical: 8,
+		paddingHorizontal: 16,
+		borderRadius: 8,
+		alignItems: 'center' as const,
+		justifyContent: 'center' as const,
+		backgroundColor: '#2196F3',
+		minHeight: 36
+	},
+	scanBtnText: {
+		color: '#fff',
+		fontSize: 14,
+		fontWeight: '600' as const
+	},
+	smallBtn: {
+		paddingVertical: 6,
+		paddingHorizontal: 12,
+		borderRadius: 6,
+		alignItems: 'center' as const,
+		justifyContent: 'center' as const,
+		minHeight: 32
+	},
+	smallBtnText: {
+		color: '#fff',
+		fontSize: 13,
+		fontWeight: '600' as const
 	},
 	emptyText: {
 		textAlign: 'center',

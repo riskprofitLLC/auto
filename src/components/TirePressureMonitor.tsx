@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native'
 import { TirePressure } from '../types/car'
+import FeedbackButton from './FeedbackButton'
 
 interface TirePressureMonitorProps {
 	visible: boolean
@@ -43,9 +44,9 @@ const TirePressureMonitor: React.FC<TirePressureMonitorProps> = ({ visible, onCl
 				<View style={styles.modalContent}>
 					<View style={styles.header}>
 						<Text style={styles.title}>Давление в шинах</Text>
-						<TouchableOpacity onPress={onClose} style={styles.closeButton}>
+						<FeedbackButton onPress={onClose} style={styles.closeButton}>
 							<Text style={styles.closeText}>✕</Text>
-						</TouchableOpacity>
+						</FeedbackButton>
 					</View>
 
 					{/* Графическое изображение автомобиля (Минимализм) */}
