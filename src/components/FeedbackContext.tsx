@@ -92,7 +92,7 @@ const playBeep = () => {
 }
 
 export const FeedbackProvider = ({ children }: { children: ReactNode }) => {
-	const [mode, setMode] = useState<FeedbackMode>('none')
+	const [mode, setMode] = useState<FeedbackMode>('vibration')
 
 	const trigger = useCallback(() => {
 		if (mode === 'vibration') {

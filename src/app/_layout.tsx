@@ -1,19 +1,17 @@
 import React from 'react'
 import { Stack } from 'expo-router'
-import { useColorScheme } from 'react-native'
 import { FeedbackProvider } from '../components/FeedbackContext'
+import { colors } from '../constants/colors'
 
 export default function TabLayout() {
-	const colorScheme = useColorScheme()
-
 	return (
 		<FeedbackProvider>
 			<Stack
 				screenOptions={{
 					headerStyle: {
-						backgroundColor: colorScheme === 'dark' ? '#000' : '#fff'
+						backgroundColor: colors.background
 					},
-					headerTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+					headerTintColor: colors.textPrimary,
 					headerTitleStyle: {
 						fontWeight: 'bold'
 					}

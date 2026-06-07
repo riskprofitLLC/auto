@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { View, StyleSheet, SafeAreaView, Text } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { colors } from '../constants/colors'
 import Toast from '../components/Toast'
 import { useFeedback } from '../components/FeedbackContext'
 import CarControls from '../components/CarControls'
@@ -37,6 +39,7 @@ export default function App() {
 		trunk: false,
 		steering: false,
 		bsm: false,
+			security: false,
 		seat_driver_heat: false,
 		seat_driver_vent: false,
 		seat_passenger_heat: false,
@@ -89,6 +92,7 @@ export default function App() {
 				trunk: false,
 				steering: false,
 				bsm: false,
+			security: false,
 				seat_driver_heat: false,
 				seat_driver_vent: false,
 				seat_passenger_heat: false,
@@ -115,6 +119,14 @@ export default function App() {
 		return () => clearInterval(interval)
 	}, [connectedDeviceId])
 
+	const CAR_STATE_KEY = '@car_state';
+
+	// Сохраняем состояние кнопок при каждом изменении
+	useEffect(() => {
+		saveCarState(carState);
+	}, [carState]);
+
+
 	useEffect(() => {
 		loadInitialSettings();
 		return () => {
@@ -129,11 +141,25 @@ export default function App() {
 
 	const loadInitialSettings = async () => {
 		try {
+				// Загружаем сохранённое состояние кнопок
+				const savedState = await AsyncStorage.getItem(CAR_STATE_KEY);
+				if (savedState) {
+					const parsed = JSON.parse(savedState);
+					setCarState(prev => ({ ...prev, ...parsed }));
+				}
 			const loaded = await loadSettings();
 			setSettings(loaded);
 			setFeedbackMode(loaded.buttonFeedbackMode);
 		} catch (error) {
 			console.error('Failed to load settings:', error);
+		}
+	};
+
+	const saveCarState = async (state: CarState) => {
+		try {
+			await AsyncStorage.setItem(CAR_STATE_KEY, JSON.stringify(state));
+		} catch (error) {
+			console.error("Failed to save car state:", error)
 		}
 	};
 
@@ -147,7 +173,7 @@ export default function App() {
 			<TopBar connectedDeviceName={connectedDeviceName} carState={carState} onMenuPress={() => setIsMenuOpen(true)} onSettingsPress={() => setIsSettingsOpen(true)} />
 
 			{/* 2. Панель инструментов (Шины, Настройки) */}
-			{connectedDeviceId && <TopToolbar onTpmsPress={() => setIsTpmsOpen(true)} onAmbientLightPress={() => setIsAmbientLightOpen(true)} />}
+			{connectedDeviceId && <TopToolbar onTpmsPress={() => setIsTpmsOpen(true)} onAmbientLightPress={() => setIsAmbientLightOpen(true)} mapProvider={settings.mapProvider} />}
 
 			{/* 3. Основной контент */}
 			<View style={styles.mainContent}>
@@ -203,7 +229,7 @@ export default function App() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#F8F9FA'
+		backgroundColor: colors.background
 	},
 	mainContent: {
 		flex: 1,
@@ -214,10 +240,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#fff',
+		backgroundColor: colors.backgroundCard,
 		borderRadius: 16,
 		margin: 16,
-		shadowColor: '#000',
+		shadowColor: colors.textPrimary,
 		shadowOpacity: 0.05,
 		shadowRadius: 10,
 		elevation: 2

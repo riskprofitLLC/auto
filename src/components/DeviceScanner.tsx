@@ -1,5 +1,7 @@
 import React from 'react'
 import { View, Text, FlatList, StyleSheet, Button, Modal, TouchableOpacity } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { colors } from '../constants/colors'
 import { BleDevice } from '../types/bluetooth'
 import SignalStrength from './SignalStrength'
 import FeedbackButton from './FeedbackButton'
@@ -52,8 +54,8 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
 				<View style={styles.modalContent}>
 					<View style={styles.header}>
 						<Text style={styles.title}>Устройства Bluetooth</Text>
-						<FeedbackButton onPress={onClose} style={styles.closeButton}>
-							<Text style={styles.closeText}>✕</Text>
+						<FeedbackButton onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
+							<Ionicons name='close' size={20} color={colors.textPrimary} />
 						</FeedbackButton>
 					</View>
 
@@ -63,15 +65,15 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
 								<Text style={styles.scanBtnText}>Начать поиск</Text>
 							</FeedbackButton>
 						) : connectingId ? (
-							<FeedbackButton onPress={() => onCancel(connectingId)} style={[styles.scanBtn, { backgroundColor: '#ff4444' }]}>
+							<FeedbackButton onPress={() => onCancel(connectingId)} style={[styles.scanBtn, { backgroundColor: colors.danger }]}>
 								<Text style={styles.scanBtnText}>Отмена подключения</Text>
 							</FeedbackButton>
 						) : (
 							<View style={styles.scanButtonsRow}>
-								<FeedbackButton onPress={onStopScan} style={[styles.scanBtn, { backgroundColor: '#ff4444' }]}>
+								<FeedbackButton onPress={onStopScan} style={[styles.scanBtn, { backgroundColor: colors.danger }]}>
 								<Text style={styles.scanBtnText}>Стоп</Text>
 							</FeedbackButton>
-								<FeedbackButton onPress={onRescan} style={[styles.scanBtn, { backgroundColor: '#2196F3' }]}>
+								<FeedbackButton onPress={onRescan} style={[styles.scanBtn, { backgroundColor: colors.primary }]}>
 								<Text style={styles.scanBtnText}>Обновить</Text>
 							</FeedbackButton>
 							</View>
@@ -102,15 +104,15 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
 
 									<View style={styles.actions}>
 										{isThisConnected ? (
-											<FeedbackButton onPress={() => onDisconnect(item.id)} style={[styles.smallBtn, { backgroundColor: '#FF5252' }]}>
+											<FeedbackButton onPress={() => onDisconnect(item.id)} style={[styles.smallBtn, { backgroundColor: colors.danger }]}>
 													<Text style={styles.smallBtnText}>Откл.</Text>
 												</FeedbackButton>
 										) : isThisConnecting ? (
-											<FeedbackButton disabled style={[styles.smallBtn, { backgroundColor: '#999' }]}>
+											<FeedbackButton disabled style={[styles.smallBtn, { backgroundColor: colors.textMuted }]}>
 													<Text style={styles.smallBtnText}>...</Text>
 												</FeedbackButton>
 										) : (
-											<FeedbackButton onPress={() => onConnect(item.id)} disabled={!!connectingId || !!connectedDeviceId} style={[styles.smallBtn, { backgroundColor: '#4CAF50' }, (!!connectingId || !!connectedDeviceId) && { opacity: 0.5 }]}>
+											<FeedbackButton onPress={() => onConnect(item.id)} disabled={!!connectingId || !!connectedDeviceId} style={[styles.smallBtn, { backgroundColor: colors.success }, (!!connectingId || !!connectedDeviceId) && { opacity: 0.5 }]}>
 													<Text style={styles.smallBtnText}>Подкл.</Text>
 												</FeedbackButton>
 										)}
@@ -129,16 +131,16 @@ const DeviceScanner: React.FC<DeviceScannerProps> = ({
 const styles = StyleSheet.create({
 	modalOverlay: {
 		flex: 1,
-		backgroundColor: 'rgba(0,0,0,0.5)',
+		backgroundColor: colors.overlay,
 		justifyContent: 'flex-end'
 	},
 	modalContent: {
-		backgroundColor: '#fff',
+		backgroundColor: colors.modalBackground,
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20,
 		height: '80%',
 		padding: 16,
-		shadowColor: '#000',
+		shadowColor: colors.textPrimary,
 		shadowOpacity: 0.2,
 		shadowRadius: 10,
 		shadowOffset: { width: 0, height: -5 },
@@ -151,20 +153,21 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 		paddingBottom: 10,
 		borderBottomWidth: 1,
-		borderBottomColor: '#eee'
+		borderBottomColor: colors.border
 	},
 	title: {
 		fontSize: 20,
 		fontWeight: 'bold',
-		color: '#333'
+		color: colors.textPrimary
 	},
-	closeButton: {
-		padding: 8
-	},
-	closeText: {
-		fontSize: 24,
-		color: '#666'
-	},
+    closeBtn: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.backgroundElevated,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+    },
 	controls: {
 		marginBottom: 16
 	},
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		padding: 12,
-		backgroundColor: '#f9f9f9',
+		backgroundColor: colors.backgroundElevated,
 		borderRadius: 8,
 		marginBottom: 8,
 		gap: 10,
@@ -185,8 +188,8 @@ const styles = StyleSheet.create({
 		borderColor: 'transparent'
 	},
 	connectedDeviceItem: {
-		backgroundColor: '#E3F2FD',
-		borderColor: '#2196F3'
+		backgroundColor: colors.surface,
+		borderColor: colors.primary
 	},
 	deviceHeader: {
 		flexDirection: 'row',
@@ -197,23 +200,23 @@ const styles = StyleSheet.create({
 	deviceName: {
 		fontSize: 16,
 		fontWeight: '600',
-		color: '#333'
+		color: colors.textPrimary
 	},
 	connectedDeviceName: {
-		color: '#1565C0'
+		color: colors.primaryDark
 	},
 	rssiText: {
 		fontSize: 12,
 		fontWeight: 'bold',
-		color: '#03A9F4',
-		backgroundColor: '#E1F5FE',
+		color: colors.secondary,
+		backgroundColor: colors.backgroundElevated,
 		paddingHorizontal: 6,
 		paddingVertical: 2,
 		borderRadius: 4
 	},
 	deviceId: {
 		fontSize: 12,
-		color: '#888'
+		color: colors.textMuted
 	},
 	actions: {
 		minWidth: 80,
@@ -225,11 +228,11 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		alignItems: 'center' as const,
 		justifyContent: 'center' as const,
-		backgroundColor: '#2196F3',
+		backgroundColor: colors.primary,
 		minHeight: 36
 	},
 	scanBtnText: {
-		color: '#fff',
+		color: colors.textPrimary,
 		fontSize: 14,
 		fontWeight: '600' as const
 	},
@@ -242,13 +245,13 @@ const styles = StyleSheet.create({
 		minHeight: 32
 	},
 	smallBtnText: {
-		color: '#fff',
+		color: colors.textPrimary,
 		fontSize: 13,
 		fontWeight: '600' as const
 	},
 	emptyText: {
 		textAlign: 'center',
-		color: '#999',
+		color: colors.textMuted,
 		marginTop: 40,
 		fontSize: 16
 	}

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
-import { AppSettings, ButtonFeedbackMode, DEFAULT_SETTINGS } from '../types/settings';
+import { Ionicons } from '@expo/vector-icons';
+import { colors } from '../constants/colors';
+import { AppSettings, ButtonFeedbackMode, MapProvider, DEFAULT_SETTINGS } from '../types/settings';
 import { loadSettings, saveSettings } from '../utils/settingsStorage';
 import FeedbackButton from './FeedbackButton';
 
@@ -14,6 +16,12 @@ const FEEDBACK_OPTIONS: { value: ButtonFeedbackMode; label: string; icon: string
 	{ value: 'sound', label: 'Звуковой сигнал', icon: '🔊' },
 	{ value: 'vibration', label: 'Вибрация', icon: '📳' },
 	{ value: 'none', label: 'Ничего', icon: '🔇' }
+];
+
+const MAP_OPTIONS: { value: MapProvider; label: string; icon: string }[] = [
+	{ value: 'yandex-navi', label: 'Яндекс Навигатор', icon: '🧭' },
+	{ value: 'yandex-maps', label: 'Яндекс Карты', icon: '🗺️' },
+	{ value: 'google-maps', label: 'Google Карты', icon: '🌍' },
 ];
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSettingsChange }) => {
@@ -52,14 +60,27 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSetti
 		}
 	};
 
+	const updateMapProvider = async (provider: MapProvider) => {
+		const newSettings = { ...settings, mapProvider: provider };
+		setSettings(newSettings);
+		try {
+			await saveSettings(newSettings);
+			if (onSettingsChange) {
+				onSettingsChange(newSettings);
+			}
+		} catch (error) {
+			console.error('Failed to save settings:', error);
+		}
+	};
+
 	return (
 		<Modal animationType='slide' transparent={true} visible={visible} onRequestClose={onClose}>
 			<View style={styles.modalOverlay}>
 				<View style={styles.modalContent}>
 					<View style={styles.header}>
 						<Text style={styles.title}>⚙️ Настройки</Text>
-						<FeedbackButton onPress={onClose} style={styles.closeButton}>
-							<Text style={styles.closeText}>✕</Text>
+						<FeedbackButton onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
+							<Ionicons name='close' size={20} color={colors.textPrimary} />
 						</FeedbackButton>
 					</View>
 
@@ -107,6 +128,44 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSetti
 								</View>
 							)}
 						</View>
+							{/* Секция: Выбор карты */}
+							<View style={styles.section}>
+								<Text style={styles.sectionTitle}>Карта</Text>
+								<Text style={styles.sectionDescription}>
+									Выберите приложение для кнопки «Карта»:
+								</Text>
+								<View style={styles.optionsContainer}>
+									{MAP_OPTIONS.map((option) => (
+										<FeedbackButton
+											key={option.value}
+											style={[
+												styles.optionCard,
+												settings.mapProvider === option.value && styles.optionCardActive
+											]}
+											onPress={() => updateMapProvider(option.value)}
+											activeOpacity={0.7}
+										>
+											<View style={styles.optionContent}>
+												<Text style={styles.optionIcon}>{option.icon}</Text>
+												<View style={styles.optionTextContainer}>
+													<Text
+														style={[
+															styles.optionLabel,
+															settings.mapProvider === option.value &&
+																styles.optionLabelActive
+														]}
+													>
+														{option.label}
+													</Text>
+												</View>
+												{settings.mapProvider === option.value && (
+													<Text style={styles.checkmark}>✓</Text>
+												)}
+											</View>
+										</FeedbackButton>
+									))}
+								</View>
+							</View>
 					</ScrollView>
 				</View>
 			</View>
@@ -117,16 +176,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSetti
 const styles = StyleSheet.create({
 	modalOverlay: {
 		flex: 1,
-		backgroundColor: 'rgba(0,0,0,0.5)',
+		backgroundColor: colors.overlay,
 		justifyContent: 'flex-end'
 	},
 	modalContent: {
-		backgroundColor: '#fff',
+		backgroundColor: colors.modalBackground,
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20,
 		maxHeight: '70%',
 		padding: 20,
-		shadowColor: '#000',
+		shadowColor: colors.textPrimary,
 		shadowOpacity: 0.2,
 		shadowRadius: 10,
 		shadowOffset: { width: 0, height: -5 },
@@ -139,19 +198,15 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 		paddingBottom: 15,
 		borderBottomWidth: 1,
-		borderBottomColor: '#eee'
+		borderBottomColor: colors.border
 	},
 	title: {
 		fontSize: 22,
 		fontWeight: 'bold',
-		color: '#333'
+		color: colors.textPrimary
 	},
-	closeButton: {
-		padding: 8
-	},
-	closeText: {
-		fontSize: 24,
-		color: '#666'
+	closeBtn: {
+		width: 36, height: 36, borderRadius: 18, backgroundColor: colors.backgroundElevated, alignItems: 'center', justifyContent: 'center'
 	},
 	section: {
 		marginBottom: 20
@@ -159,33 +214,33 @@ const styles = StyleSheet.create({
 	sectionTitle: {
 		fontSize: 16,
 		fontWeight: 'bold',
-		color: '#333',
+		color: colors.textPrimary,
 		marginBottom: 8
 	},
 	sectionDescription: {
 		fontSize: 14,
-		color: '#666',
+		color: colors.textSecondary,
 		marginBottom: 16,
 		lineHeight: 20
 	},
 	loadingText: {
 		textAlign: 'center',
-		color: '#999',
+		color: colors.textMuted,
 		paddingVertical: 20
 	},
 	optionsContainer: {
 		gap: 12
 	},
 	optionCard: {
-		backgroundColor: '#F5F5F5',
+		backgroundColor: colors.backgroundElevated,
 		borderRadius: 12,
 		padding: 16,
 		borderWidth: 2,
 		borderColor: 'transparent'
 	},
 	optionCardActive: {
-		backgroundColor: '#E3F2FD',
-		borderColor: '#2196F3'
+		backgroundColor: colors.surface,
+		borderColor: colors.primary
 	},
 	optionContent: {
 		flexDirection: 'row',
@@ -200,16 +255,16 @@ const styles = StyleSheet.create({
 	},
 	optionLabel: {
 		fontSize: 16,
-		color: '#333',
+		color: colors.textPrimary,
 		fontWeight: '500'
 	},
 	optionLabelActive: {
-		color: '#1565C0',
+		color: colors.primaryDark,
 		fontWeight: '600'
 	},
 	checkmark: {
 		fontSize: 20,
-		color: '#4CAF50',
+		color: colors.success,
 		fontWeight: 'bold'
 	}
 });

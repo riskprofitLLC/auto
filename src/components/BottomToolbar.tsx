@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { colors } from '../constants/colors'
 
 interface BottomToolbarProps {
 	onTpmsPress: () => void
@@ -25,14 +26,14 @@ const BottomToolbar: React.FC<BottomToolbarProps> = ({ onTpmsPress }) => {
 const styles = StyleSheet.create({
 	container: {
 		height: 70,
-		backgroundColor: '#fff',
+		backgroundColor: colors.background,
 		flexDirection: 'row',
 		borderTopWidth: 1,
-		borderTopColor: '#eee',
+		borderTopColor: colors.border,
 		paddingHorizontal: 20,
 		alignItems: 'center',
 		justifyContent: 'space-around',
-		shadowColor: '#000',
+		shadowColor: colors.textPrimary,
 		shadowOpacity: 0.1,
 		shadowRadius: 5,
 		shadowOffset: { width: 0, height: -2 },
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		padding: 10,
 		borderRadius: 12,
-		backgroundColor: '#F5F5F5',
+		backgroundColor: colors.backgroundElevated,
 		width: 80,
 		height: 60
 	},
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: 12,
 		fontWeight: '600',
-		color: '#555'
+		color: colors.textSecondary
 	}
 })
 

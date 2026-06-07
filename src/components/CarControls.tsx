@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, ScrollView } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors } from '../constants/colors';
 import { BleDevice } from '../types/bluetooth';
 import { CarState, ControlType } from '../types/car';
 import FeedbackButton from './FeedbackButton';
@@ -28,20 +30,29 @@ const CarControls: React.FC<CarControlsProps> = ({
 		seat_passenger_heat: false,
 		seat_passenger_vent: false,
 		bsm: false,
+		security: false,
 	});
 
 	const fadeAnim = useRef(new Animated.Value(0)).current;
+	const scaleAnim = useRef(new Animated.Value(0.95)).current;
 
 	const timersRef = useRef<Record<ControlType | 'bsm', ReturnType<typeof setTimeout> | null>>({
 		relay: null, trunk: null, steering: null, seat_driver_heat: null,
 		seat_driver_vent: null, seat_passenger_heat: null, seat_passenger_vent: null, bsm: null,
+			security: null,
 	});
 
 	useEffect(() => {
 		if (connectedDeviceId) {
-			Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
+			Animated.parallel([
+				Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+				Animated.spring(scaleAnim, { toValue: 1, tension: 80, friction: 10, useNativeDriver: true }),
+			]).start();
 		} else {
-			Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start();
+			Animated.parallel([
+				Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
+				Animated.timing(scaleAnim, { toValue: 0.95, duration: 200, useNativeDriver: true }),
+			]).start();
 		}
 		return () => {
 			Object.values(timersRef.current).forEach(timer => timer && clearTimeout(timer));
@@ -87,22 +98,24 @@ const CarControls: React.FC<CarControlsProps> = ({
 					case 'relay': newState.relay = true; message = '✅ Двигатель ЗАПУЩЕН'; break;
 					case 'trunk': newState.trunk = true; message = '📦 Багажник ОТКРЫТ'; break;
 					case 'bsm': newState.bsm = true; message = '🚗 BSM ВКЛ'; break;
+					case 'security': newState.security = true; message = '🔒 Охрана ВКЛ'; break;
 					case 'steering': newState.steering = true; message = '🔥 Подогрев руля ВКЛ'; break;
 					case 'seat_driver_heat': newState.seat_driver_heat = true; newState.seat_driver_vent = false; message = '🔥 Подогрев водителя ВКЛ'; break;
-					case 'seat_driver_vent': newState.seat_driver_vent = true; newState.seat_driver_heat = false; message = '💨 Вентиляция водителя ВКЛ'; break;
+					case 'seat_driver_vent': newState.seat_driver_vent = true; newState.seat_driver_heat = false; message = '❄️ Вентиляция водителя ВКЛ'; break;
 					case 'seat_passenger_heat': newState.seat_passenger_heat = true; newState.seat_passenger_vent = false; message = '🔥 Подогрев пассажира ВКЛ'; break;
-					case 'seat_passenger_vent': newState.seat_passenger_vent = true; newState.seat_passenger_heat = false; message = '💨 Вентиляция пассажира ВКЛ'; break;
+					case 'seat_passenger_vent': newState.seat_passenger_vent = true; newState.seat_passenger_heat = false; message = '❄️ Вентиляция пассажира ВКЛ'; break;
 				}
 			} else {
 				switch (type) {
 					case 'relay': newState.relay = false; message = '✅ Двигатель ОСТАНОВЛЕН'; break;
 					case 'trunk': newState.trunk = false; message = '🔒 Багажник ЗАКРЫТ'; break;
 					case 'bsm': newState.bsm = false; message = '🚗 BSM ВЫКЛ'; break;
-					case 'steering': newState.steering = false; message = '❄️ Подогрев руля ВЫКЛ'; break;
+					case 'security': newState.security = false; message = '🔓 Охрана ВЫКЛ'; break;
+					case 'steering': newState.steering = false; message = '🔥 Подогрев руля ВЫКЛ'; break;
 					case 'seat_driver_heat': newState.seat_driver_heat = false; message = '❄️ Подогрев водителя ВЫКЛ'; break;
-					case 'seat_driver_vent': newState.seat_driver_vent = false; message = '⏹ Вентиляция водителя ВЫКЛ'; break;
+					case 'seat_driver_vent': newState.seat_driver_vent = false; message = '❄️ Вентиляция водителя ВЫКЛ'; break;
 					case 'seat_passenger_heat': newState.seat_passenger_heat = false; message = '❄️ Подогрев пассажира ВЫКЛ'; break;
-					case 'seat_passenger_vent': newState.seat_passenger_vent = false; message = '⏹ Вентиляция пассажира ВЫКЛ'; break;
+					case 'seat_passenger_vent': newState.seat_passenger_vent = false; message = '❄️ Вентиляция пассажира ВЫКЛ'; break;
 				}
 			}
 
@@ -131,6 +144,7 @@ const CarControls: React.FC<CarControlsProps> = ({
 			case 'relay': return state.relay;
 			case 'trunk': return state.trunk;
 			case 'bsm': return state.bsm;
+		case 'security': return state.security;
 			case 'steering': return state.steering;
 			case 'seat_driver_heat': return state.seat_driver_heat;
 			case 'seat_driver_vent': return state.seat_driver_vent;
@@ -145,230 +159,454 @@ const CarControls: React.FC<CarControlsProps> = ({
 	if (!connectedDeviceId) return null;
 
 	return (
-		<Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-			<ScrollView showsVerticalScrollIndicator={false}>
+		<Animated.View style={[styles.container, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
+			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
 
-				{/* 🚗 ЗОНА ДВИГАТЕЛЯ */}
-				<View style={styles.sectionCard}>
-					<Text style={styles.sectionTitle}>Силовая установка</Text>
-					<View style={styles.engineRow}>
-						<ToggleBtn
-							label={carState.relay ? "Остановить" : "Запустить"}
-							icon={carState.relay ? "🛑" : "🔑"}
-							isActive={carState.relay}
-							colorActive="#EF5350"
-							colorInactive="#4CAF50"
-							loading={isSending.relay}
-							onPress={() => toggleFeature('relay')}
-							large
-						/>
+				{/* ── ДВИГАТЕЛЬ ── */}
+				<View style={styles.section}>
+					<Text style={styles.sectionEyebrow}>СИЛОВАЯ УСТАНОВКА</Text>
+					<View style={styles.orbSection}>
+						<FeedbackButton onPress={() => toggleFeature('relay')} activeOpacity={0.85}>
+							<Animated.View style={[
+								styles.orbOuter,
+								carState.relay && { borderColor: colors.engine + '88' }
+							]}>
+								<View style={[styles.orbInner, { backgroundColor: carState.relay ? colors.engine : colors.backgroundElevated }]}>
+									{isSending.relay ? (
+										<Text style={styles.orbIcon}>⏳</Text>
+									) : (
+										<Ionicons name='power' size={28} color={carState.relay ? '#fff' : colors.textMuted} />
+									)}
+								</View>
+							</Animated.View>
+						</FeedbackButton>
+						<Text style={[styles.orbLabel, carState.relay && { color: colors.success }]}>
+							{carState.relay ? '● РАБОТАЕТ' : '○ ОСТАНОВЛЕН'}
+						</Text>
 					</View>
-					{carState.relay && <Text style={styles.statusActive}>🟢 Двигатель работает</Text>}
 				</View>
 
-				{/* 🎛️ ЗОНА КОМФОРТА И БАГАЖНИКА */}
-				<View style={[styles.sectionCard, isClimateLocked && styles.lockedCard]}>
-					<View style={styles.headerWithLock}>
-						<Text style={styles.sectionTitle}>Управление</Text>
-						{isClimateLocked && <Text style={styles.lockIcon}>🔒</Text>}
+				{/* ── УПРАВЛЕНИЕ ── */}
+				<View style={styles.section}>
+					<View style={styles.sectionHeaderRow}>
+						<Text style={styles.sectionEyebrow}>УПРАВЛЕНИЕ</Text>
+						{isClimateLocked && <Ionicons name='lock-closed' size={14} color={colors.textMuted} />}
 					</View>
 
 					{isClimateLocked && (
-						<Text style={styles.lockMessage}>Запустите двигатель для доступа к климату</Text>
+						<Text style={styles.lockMessage}>Запустите двигатель для доступа</Text>
 					)}
 
-					<View style={styles.grid}>
+					<View style={styles.chipsGrid}>
 						{/* Багажник */}
-						<View style={styles.cardSmall}>
-							<Text style={styles.cardTitle}>Багажник</Text>
-							<ToggleBtn
-								label={carState.trunk ? "Закрыть" : "Открыть"}
-								icon={carState.trunk ? "🔒" : "📦"}
-								isActive={carState.trunk}
-								colorActive="#9C27B0"
-								colorInactive="#E1BEE7"
-								loading={isSending.trunk}
-								onPress={() => toggleFeature('trunk')}
-							/>
-						</View>
+						<ChipBtn
+							label='Багажник'
+							icon={carState.trunk ? '🔒' : '📦'}
+							isActive={carState.trunk}
+							colorActive={colors.trunk}
+							colorInactive={colors.trunkOff}
+							loading={isSending.trunk}
+							onPress={() => toggleFeature('trunk')}
+							
+						/>
 
-						{/* BSM */}
-						<View style={styles.cardSmall}>
-							<Text style={styles.cardTitle}>BSM</Text>
-							<ToggleBtn
-								label={carState.bsm ? "Выкл" : "Вкл"}
-								icon={carState.bsm ? "🚗" : "📡"}
-								isActive={carState.bsm}
-								colorActive="#4CAF50"
-								colorInactive="#E0E0E0"
-								loading={isSending.bsm}
-								onPress={() => toggleFeature('bsm')}
-							/>
-						</View>
+						{/* Охрана */}
+						<ChipBtn
+							label='Охрана'
+							icon='🔒'
+							isActive={carState.security}
+							colorActive={colors.security}
+							colorInactive={colors.securityOff}
+							loading={isSending.security}
+							onPress={() => toggleFeature('security')}
+						/>
 
-						{/* Руль */}
-						<View style={styles.cardSmall}>
-							<Text style={styles.cardTitle}>Руль</Text>
-							<ToggleBtn
-								label={carState.steering && !isClimateLocked ? "Выкл" : "Вкл"}
-								icon={carState.steering && !isClimateLocked ? "❄️" : "🔥"}
-								isActive={carState.steering && !isClimateLocked}
-								colorActive="#FF9800"
-								colorInactive="#E0E0E0"
-								loading={isSending.steering}
-								onPress={() => toggleFeature('steering')}
-							/>
+						<View style={styles.seatGroup}>
+							<Text style={styles.seatLabel}>РУЛЬ / BSM</Text>
+							<View style={styles.seatRow}>
+								<ChipBtn
+									label='Руль'
+									icon=''
+									isActive={carState.steering && !isClimateLocked}
+									colorActive={colors.steering}
+									colorInactive={colors.steeringOff}
+									loading={isSending.steering}
+									onPress={() => toggleFeature('steering')}
+									locked={isClimateLocked}
+									iconComponent={
+										<MaterialCommunityIcons
+											name='steering'
+											size={28}
+											color={carState.steering && !isClimateLocked ? colors.steering : colors.textSecondary}
+										/>
+									}
+									flex
+								/>
+								<ChipBtn
+									label='BSM'
+									icon=''
+									isActive={carState.bsm}
+									colorActive={colors.bsm}
+									colorInactive={colors.bsmOff}
+									loading={isSending.bsm}
+									onPress={() => toggleFeature('bsm')}
+									locked={isClimateLocked}
+									iconComponent={
+										<MaterialCommunityIcons
+											name='car-side'
+											size={28}
+											color={carState.bsm ? colors.bsm : colors.textSecondary}
+										/>
+									}
+									flex
+								/>
+							</View>
 						</View>
-
-						{/* Водитель */}
-						<View style={styles.cardSmall}>
-							<Text style={styles.cardTitle}>Водитель</Text>
-							<View style={styles.miniGrid}>
-								<ToggleBtn
-									label="Подогрев"
-									icon="🔥"
+					</View>
+								{/* Водитель */}
+						<View style={styles.seatGroup}>
+							<Text style={styles.seatLabel}>ВОДИТЕЛЬ</Text>
+							<View style={styles.seatRow}>
+								<ChipBtn
+									label='Подогрев'
+									icon='🔥'
 									isActive={carState.seat_driver_heat && !isClimateLocked}
-									colorActive="#FF9800"
-									colorInactive="#F5F5F5"
+									colorActive={colors.seatHeat}
+									colorInactive={colors.seatHeatOff}
 									loading={isSending.seat_driver_heat}
 									onPress={() => toggleFeature('seat_driver_heat')}
-									small
+									locked={isClimateLocked}
+									flex
 								/>
-								<ToggleBtn
-									label="Вент."
-									icon="💨"
+								<ChipBtn
+									label='Вентиляция'
+									icon='❄️'
 									isActive={carState.seat_driver_vent && !isClimateLocked}
-									colorActive="#03A9F4"
-									colorInactive="#F5F5F5"
+									colorActive={colors.seatVent}
+									colorInactive={colors.seatHeatOff}
 									loading={isSending.seat_driver_vent}
 									onPress={() => toggleFeature('seat_driver_vent')}
-									small
+									locked={isClimateLocked}
+									flex
 								/>
 							</View>
 						</View>
 
 						{/* Пассажир */}
-						<View style={styles.cardSmall}>
-							<Text style={styles.cardTitle}>Пассажир</Text>
-							<View style={styles.miniGrid}>
-								<ToggleBtn
-									label="Подогрев"
-									icon="🔥"
+						<View style={styles.seatGroup}>
+							<Text style={styles.seatLabel}>ПАССАЖИР</Text>
+							<View style={styles.seatRow}>
+								<ChipBtn
+									label='Подогрев'
+									icon='🔥'
 									isActive={carState.seat_passenger_heat && !isClimateLocked}
-									colorActive="#FF9800"
-									colorInactive="#F5F5F5"
+									colorActive={colors.seatHeat}
+									colorInactive={colors.seatHeatOff}
 									loading={isSending.seat_passenger_heat}
 									onPress={() => toggleFeature('seat_passenger_heat')}
-									small
+									locked={isClimateLocked}
+									flex
 								/>
-								<ToggleBtn
-									label="Вент."
-									icon="💨"
+								<ChipBtn
+									label='Вентиляция'
+									icon='❄️'
 									isActive={carState.seat_passenger_vent && !isClimateLocked}
-									colorActive="#03A9F4"
-									colorInactive="#F5F5F5"
+									colorActive={colors.seatVent}
+									colorInactive={colors.seatHeatOff}
 									loading={isSending.seat_passenger_vent}
 									onPress={() => toggleFeature('seat_passenger_vent')}
-									small
+									locked={isClimateLocked}
+									flex
 								/>
 							</View>
 						</View>
-					</View>
 				</View>
 			</ScrollView>
 		</Animated.View>
 	);
 };
 
-// 🔘 Компонент кнопки с обратной связью
-interface ToggleBtnProps {
+// ── Chip-кнопка (стиль AmbientLight: пилюля с бордером) ──
+interface ChipBtnProps {
 	label: string;
 	icon: string;
 	isActive: boolean;
 	colorActive: string;
 	colorInactive: string;
 	loading?: boolean;
-	disabled?: boolean;
 	onPress: () => void;
-	large?: boolean;
-	medium?: boolean;
-	small?: boolean;
+	locked?: boolean;
+	flex?: boolean;
+	iconComponent?: React.ReactNode;
+	circle?: boolean;
 }
 
-const ToggleBtn: React.FC<ToggleBtnProps> = ({
-	label, icon, isActive, colorActive, colorInactive, loading, disabled, onPress, large, medium, small
-}) => {
-	const btnStyle = [
-		styles.toggleBtn,
-		large && styles.btnLarge,
-		medium && styles.btnMedium,
-		small && styles.btnSmall,
-		disabled && styles.btnDisabled,
-		{
-			backgroundColor: disabled ? '#EEEEEE' : (isActive ? colorActive : colorInactive),
-			borderColor: disabled ? '#CCCCCC' : (isActive ? colorActive : '#ddd'),
-			opacity: (disabled || loading) ? 0.6 : 1
-		}
-	];
+const ChipBtn: React.FC<ChipBtnProps> = ({ label, icon, isActive, colorActive, colorInactive, loading, onPress, locked, flex, iconComponent, circle }) => {
+	const disabled = locked || loading;
+
+	if (circle) {
+		return (
+			<View style={styles.circleWrap}>
+				<FeedbackButton
+					onPress={onPress}
+					disabled={disabled}
+					activeOpacity={0.7}
+					style={[styles.circleBtn, { opacity: disabled ? 0.5 : 1 }]}
+				>
+					<View style={styles.circleContent}>
+						{iconComponent ? (
+							<View style={styles.circleIconWrap}>{iconComponent}</View>
+						) : null}
+						<Text style={[
+							styles.circleLabel,
+							{ color: disabled ? colors.textMuted : (isActive ? colorActive : colors.textSecondary) }
+						]}>{loading ? '⏳' : label}</Text>
+					</View>
+				</FeedbackButton>
+			</View>
+		);
+	}
 
 	return (
 		<FeedbackButton
-			style={btnStyle}
 			onPress={onPress}
-			disabled={!!loading || !!disabled}
+			disabled={disabled}
 			activeOpacity={0.7}
+			style={[
+				styles.chip,
+				flex && styles.chipFlex,
+				{
+					backgroundColor: disabled ? colors.backgroundElevated : (isActive ? colorActive + '22' : colorInactive),
+					borderColor: disabled ? colors.border : (isActive ? colorActive : 'rgba(255,255,255,0.2)'),
+					opacity: disabled ? 0.5 : 1,
+				}
+			]}
 		>
 			{loading ? (
-				<Text style={styles.btnLoading}>⏳</Text>
+				<Text style={styles.chipIcon}>⏳</Text>
+			) : iconComponent ? (
+				iconComponent
 			) : (
-				<>
-					<Text style={[styles.btnIcon, large && styles.iconLarge]}>{icon}</Text>
-					<Text style={[styles.btnText, isActive && !disabled ? styles.textWhite : styles.textDark, small && styles.textSmall]}>
-						{label}
-					</Text>
-				</>
+				<Text style={styles.chipIcon}>{icon}</Text>
 			)}
+			<Text style={[
+				styles.chipLabel,
+				{ color: disabled ? colors.textMuted : (isActive ? colorActive : colors.textSecondary) }
+			]}>{label}</Text>
 		</FeedbackButton>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: { flex: 1, backgroundColor: '#F8F9FA' },
-	sectionCard: {
-		backgroundColor: '#fff', borderRadius: 12, padding: 12, marginBottom: 12,
-		shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+	container: {
+		flex: 1,
 	},
-	lockedCard: { backgroundColor: '#FAFAFA', borderWidth: 1, borderColor: '#EEE' },
-	headerWithLock: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
-	lockIcon: { fontSize: 16, marginLeft: 6 },
-	lockMessage: { textAlign: 'center', color: '#999', fontStyle: 'italic', marginBottom: 10, fontSize: 13 },
-	sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#333' },
-	engineRow: { flexDirection: 'row', justifyContent: 'center', marginBottom: 8 },
-	grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 10 },
-	cardSmall: {
-		backgroundColor: '#fff', borderRadius: 12, padding: 10, width: '48%', marginBottom: 10,
-		shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1,
+	scrollContent: {
+		padding: 16,
+		paddingTop: 8,
+		gap: 16,
 	},
-	cardTitle: { fontSize: 13, fontWeight: '600', color: '#555', marginBottom: 8, textAlign: 'center' },
-	miniGrid: { flexDirection: 'row', justifyContent: 'space-between', gap: 6 },
-	toggleBtn: {
-		alignItems: 'center', justifyContent: 'center', borderRadius: 10, borderWidth: 1, paddingVertical: 8,
-		shadowOpacity: 0.1, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 1,
+
+	// ── Секции ──
+	section: {
+		backgroundColor: colors.backgroundCard,
+		borderRadius: 20,
+		padding: 20,
+		borderWidth: 1,
+		borderColor: colors.border,
 	},
-	btnDisabled: { backgroundColor: '#EEEEEE', borderColor: '#CCCCCC' },
-	btnLarge: { width: '100%', paddingVertical: 14, borderRadius: 12 },
-	btnMedium: { width: '100%', paddingVertical: 12, borderRadius: 10 },
-	btnSmall: { flex: 1, paddingVertical: 6, borderRadius: 8 },
-	btnIcon: { fontSize: 18, marginBottom: 3 },
-	iconLarge: { fontSize: 28, marginBottom: 6 },
-	btnText: { fontSize: 13, fontWeight: 'bold' },
-	textWhite: { color: '#fff' },
-	textDark: { color: '#333' },
-	textSmall: { fontSize: 10 },
-	btnLoading: { fontSize: 20 },
-	statusActive: {
-		marginTop: 8, fontSize: 13, color: '#4CAF50', fontWeight: 'bold', textAlign: 'center',
-		backgroundColor: '#E8F5E9', paddingVertical: 4, borderRadius: 6,
+	sectionEyebrow: {
+		fontSize: 11,
+		fontWeight: '700',
+		color: colors.textMuted,
+		letterSpacing: 3,
+		marginBottom: 16,
+	},
+	sectionHeaderRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginBottom: 16,
+	},
+	lockMessage: {
+		fontSize: 12,
+		color: colors.textMuted,
+		fontStyle: 'italic',
+		marginBottom: 12,
+		textAlign: 'center',
+	},
+
+	// ── Орб двигателя ──
+	orbSection: {
+		alignItems: 'center',
+		paddingVertical: 8,
+	},
+	orbOuter: {
+		width: 80,
+		height: 80,
+		borderRadius: 40,
+		borderWidth: 2,
+		borderColor: colors.border,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: colors.backgroundElevated,
+	},
+	orbInner: {
+		width: 64,
+		height: 64,
+		borderRadius: 32,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	orbIcon: {
+		fontSize: 24,
+	},
+	orbLabel: {
+		marginTop: 14,
+		fontSize: 12,
+		fontWeight: '700',
+		letterSpacing: 2,
+		color: colors.textMuted,
+	},
+
+	// ── Chip-кнопки ──
+	chipsGrid: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		gap: 10,
+	},
+	chip: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 8,
+		paddingVertical: 14,
+		paddingHorizontal: 18,
+		borderRadius: 14,
+		borderWidth: 1,
+	},
+	chipIcon: {
+		fontSize: 18,
+	},
+	chipLabel: {
+		fontSize: 13,
+		fontWeight: '600',
+	},
+
+	steerRow: {
+		flexDirection: 'row' as const,
+		alignItems: 'center' as const,
+		gap: 12,
+		width: '100%' as const,
+		justifyContent: 'center' as const,
+	},
+	steerOutline: {
+		width: 110,
+		height: 110,
+		alignItems: 'center' as const,
+		justifyContent: 'center' as const,
+	},
+	steerRing: {
+		top: 0,
+		left: 0,
+		position: 'absolute' as const,
+		width: 106,
+		height: 106,
+		borderRadius: 53,
+		borderWidth: 6,
+	},
+	steerSpokeH: {
+		position: 'absolute' as const,
+		width: 70,
+		height: 4,
+		borderRadius: 2,
+		top: 53,
+		left: 20,
+	},
+	steerSpokeV: {
+		position: 'absolute' as const,
+		width: 4,
+		height: 70,
+		borderRadius: 2,
+		top: 20,
+		left: 53,
+	},
+	seatGroup: {
+		width: '100%' as const,
+	},
+	seatLabel: {
+		fontSize: 11,
+		fontWeight: '700' as const,
+		color: colors.textMuted,
+		letterSpacing: 2,
+		marginBottom: 8,
+	},
+	seatRow: {
+		flexDirection: 'row' as const,
+		gap: 8,
+	},
+	chipFlex: {
+		flex: 1,
+	},
+	// ── Preview bar ──
+	circleWrap: {
+		alignItems: 'center' as const,
+		width: 76,
+	},
+	circleBtn: {
+		width: 110,
+		height: 110,
+		borderRadius: 55,
+		backgroundColor: colors.backgroundElevated,
+		alignItems: 'center' as const,
+		justifyContent: 'center' as const,
+		
+	},
+	circleContent: {
+		width: '100%' as const,
+		height: '100%' as const,
+		alignItems: 'center' as const,
+		justifyContent: 'center' as const,
+		gap: 4,
+	},
+	circleIconWrap: {
+		alignItems: 'center' as const,
+		justifyContent: 'center' as const,
+	},
+	circleLabelWrap: {
+		position: 'absolute' as const,
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		alignItems: 'center' as const,
+		justifyContent: 'center' as const,
+	},
+	circleLabel: {
+		fontSize: 11,
+		fontWeight: '600' as const,
+		color: colors.textMuted,
+		marginTop: 6,
+		textAlign: 'center' as const,
+	},
+
+	previewBar: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 10,
+		marginTop: 16,
+	},
+	previewLine: {
+		flex: 1,
+		height: 1,
+		backgroundColor: colors.border,
+	},
+	previewText: {
+		fontSize: 11,
+		fontWeight: '600',
+		color: colors.textSecondary,
+		letterSpacing: 0.5,
+		textAlign: 'center',
+		flexShrink: 1,
 	},
 });
 

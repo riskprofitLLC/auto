@@ -1,38 +1,61 @@
 import React from 'react'
-import { View, Text, StyleSheet, Linking, Alert } from 'react-native'
+import { View, Text, StyleSheet, Linking, Alert, Platform } from 'react-native'
+import { colors } from '../constants/colors'
+import { MapProvider } from '../types/settings'
 import FeedbackButton from './FeedbackButton'
 
 interface TopToolbarProps {
 	onTpmsPress: () => void
 	onAmbientLightPress?: () => void
 	onSettingsPress?: () => void
+	mapProvider: MapProvider
 }
 
-const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPress, onSettingsPress }) => {
-	const openExternalApp = async (scheme: string, appName: string, storeId: string): Promise<void> => {
-		try {
-			await Linking.openURL(scheme)
-		} catch (error: unknown) {
-			console.warn(`[TopToolbar] ${appName} fallback:`, error)
-			Alert.alert(`${appName} не найден`, 'Загрузить из Google Play или открыть в браузере?', [
-				{ text: 'Браузер', onPress: () => Linking.openURL('https://www.google.com/maps') },
-				{ text: 'Установить', onPress: () => Linking.openURL(`market://details?id=${storeId}`) },
-				{ text: 'Отмена', style: 'cancel' }
-			])
-		}
-	}
+const MAP_CONFIG: Record<MapProvider, { primaryUrl: string; storeId: string; label: string; icon: string }> = {
+	'yandex-navi': {
+		primaryUrl: 'yandexnavi://',
+		storeId: 'ru.yandex.yandexnavi',
+		label: 'Навигатор',
+		icon: '🧭',
+	},
+	'yandex-maps': {
+		primaryUrl: 'yandexmaps://',
+		storeId: 'ru.yandex.maps',
+		label: 'Карты',
+		icon: '🗺️',
+	},
+	'google-maps': {
+		primaryUrl: 'https://www.google.com/maps',
+		storeId: 'com.google.android.apps.maps',
+		label: 'Google',
+		icon: '🌍',
+	},
+}
 
-	const openGoogleMaps = async (): Promise<void> => {
-		const scheme = 'comgooglemaps://'
+const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPress, mapProvider }) => {
+	const openMap = async (): Promise<void> => {
+		const config = MAP_CONFIG[mapProvider]
 		try {
-			const supported = await Linking.canOpenURL(scheme)
-			if (supported) {
-				await Linking.openURL(scheme)
-			} else {
-				await Linking.openURL('https://www.google.com/maps')
-			}
-		} catch (error: unknown) {
-			console.error('Error opening Google Maps:', error)
+			await Linking.openURL(config.primaryUrl)
+		} catch {
+			// Если не сработало — предлагаем установить
+			Alert.alert(
+				`${config.label} не найден`,
+				'Загрузить из Google Play?',
+				[
+					{
+						text: 'Установить',
+						onPress: () => {
+							const marketUrl = Platform.select({
+								android: `market://details?id=${config.storeId}`,
+								default: `https://play.google.com/store/apps/details?id=${config.storeId}`,
+							})
+							Linking.openURL(marketUrl)
+						},
+					},
+					{ text: 'Отмена', style: 'cancel' },
+				],
+			)
 		}
 	}
 
@@ -51,30 +74,11 @@ const TopToolbar: React.FC<TopToolbarProps> = ({ onTpmsPress, onAmbientLightPres
 				</FeedbackButton>
 			)}
 
-			{/* Кнопка: Яндекс Навигатор */}
-			<FeedbackButton style={styles.toolBtn} onPress={() => openExternalApp('yandexnavi://', 'Яндекс Навигатор', 'ru.yandex.yandexnavi')}>
-				<Text style={styles.icon}>🧭</Text>
-				<Text style={styles.label}>Навиг.</Text>
+			{/* Кнопка: Карта (выбранный провайдер) */}
+			<FeedbackButton style={styles.toolBtn} onPress={openMap}>
+				<Text style={styles.icon}>{MAP_CONFIG[mapProvider].icon}</Text>
+				<Text style={styles.label}>{MAP_CONFIG[mapProvider].label}</Text>
 			</FeedbackButton>
-
-			{/* Кнопка: Яндекс Карты */}
-			<FeedbackButton style={styles.toolBtn} onPress={() => openExternalApp('yandexmaps://', 'Яндекс Карты', 'ru.yandex.maps')}>
-				<Text style={styles.icon}>🗺️</Text>
-				<Text style={styles.label}>Карты</Text>
-			</FeedbackButton>
-
-			{/* Кнопка: Google Maps */}
-			<FeedbackButton style={styles.toolBtn} onPress={openGoogleMaps}>
-				<Text style={styles.icon}>🌍</Text>
-				<Text style={styles.label}>Google</Text>
-			</FeedbackButton>
-
-			{/* Кнопка: Настройки */}
-			{onSettingsPress && (
-				<FeedbackButton style={styles.toolBtnIcon} onPress={onSettingsPress}>
-					<Text style={styles.icon}>⚙️</Text>
-				</FeedbackButton>
-			)}
 		</View>
 	)
 }
@@ -85,47 +89,47 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 		paddingHorizontal: 8,
 		paddingVertical: 10,
-		backgroundColor: '#F8F9FA',
-		gap: 8
+		backgroundColor: colors.background,
+		gap: 8,
 	},
 	toolBtn: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#FFFFFF',
+		backgroundColor: colors.backgroundElevated,
 		paddingHorizontal: 10,
 		paddingVertical: 8,
 		borderRadius: 20,
-		shadowColor: '#000',
+		shadowColor: colors.textPrimary,
 		shadowOpacity: 0.05,
 		shadowRadius: 4,
 		shadowOffset: { width: 0, height: 2 },
 		elevation: 2,
 		borderWidth: 1,
-		borderColor: '#E0E0E0'
+		borderColor: colors.border,
 	},
 	toolBtnIcon: {
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#FFFFFF',
+		backgroundColor: colors.backgroundElevated,
 		width: 36,
 		height: 36,
 		borderRadius: 18,
-		shadowColor: '#000',
+		shadowColor: colors.textPrimary,
 		shadowOpacity: 0.05,
 		shadowRadius: 4,
 		shadowOffset: { width: 0, height: 2 },
 		elevation: 2,
 		borderWidth: 1,
-		borderColor: '#E0E0E0'
+		borderColor: colors.border,
 	},
 	icon: {
-		fontSize: 16
+		fontSize: 16,
 	},
 	label: {
 		fontSize: 13,
 		fontWeight: '600',
-		color: '#333333'
-	}
+		color: colors.textSecondary,
+	},
 })
 
 export default TopToolbar

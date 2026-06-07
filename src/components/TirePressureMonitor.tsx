@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { colors } from '../constants/colors'
 import { TirePressure } from '../types/car'
 import FeedbackButton from './FeedbackButton'
 
@@ -24,16 +26,16 @@ const TirePressureMonitor: React.FC<TirePressureMonitorProps> = ({ visible, onCl
 	}, [visible])
 
 	const getStatusColor = (val: number) => {
-		if (val === 0) return '#9E9E9E' // Серый (нет данных)
-		if (val < NORMAL_PRESSURE_MIN || val > NORMAL_PRESSURE_MAX) return '#F44336' // Красный (опасно)
+		if (val === 0) return colors.textMuted // Серый (нет данных)
+		if (val < NORMAL_PRESSURE_MIN || val > NORMAL_PRESSURE_MAX) return colors.danger // Красный (опасно)
 		if (val < NORMAL_PRESSURE_MIN + 0.2 || val > NORMAL_PRESSURE_MAX - 0.2) return '#FF9800' // Оранжевый (внимание)
-		return '#4CAF50' // Зеленый (норма)
+		return colors.success // Зеленый (норма)
 	}
 
 	const TireIndicator = ({ value, position }: { value: number; position: TirePosition }) => (
 		<View style={[styles.tireWrapper, styles[position]]}>
-			<View style={[styles.tireCircle, { borderColor: getStatusColor(value), borderWidth: getStatusColor(value) === '#9E9E9E' ? 2 : 4 }]}>
-				<Text style={[styles.tireValue, { color: getStatusColor(value) === '#9E9E9E' ? '#555' : '#fff' }]}>{value > 0 ? value.toFixed(1) : '--'}</Text>
+			<View style={[styles.tireCircle, { borderColor: getStatusColor(value), borderWidth: value === 0 ? 2 : 4 }]}>
+				<Text style={[styles.tireValue, { color: value === 0 ? colors.textSecondary : colors.textPrimary }]}>{value > 0 ? value.toFixed(1) : '--'}</Text>
 			</View>
 		</View>
 	)
@@ -44,8 +46,8 @@ const TirePressureMonitor: React.FC<TirePressureMonitorProps> = ({ visible, onCl
 				<View style={styles.modalContent}>
 					<View style={styles.header}>
 						<Text style={styles.title}>Давление в шинах</Text>
-						<FeedbackButton onPress={onClose} style={styles.closeButton}>
-							<Text style={styles.closeText}>✕</Text>
+						<FeedbackButton onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
+							<Ionicons name='close' size={20} color={colors.textPrimary} />
 						</FeedbackButton>
 					</View>
 
@@ -84,18 +86,18 @@ const TirePressureMonitor: React.FC<TirePressureMonitorProps> = ({ visible, onCl
 const styles = StyleSheet.create({
 	modalOverlay: {
 		flex: 1,
-		backgroundColor: 'rgba(0,0,0,0.5)',
+		backgroundColor: colors.overlay,
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
 	modalContent: {
 		width: '85%',
 		maxWidth: 320,
-		backgroundColor: '#fff',
+		backgroundColor: colors.modalBackground,
 		borderRadius: 24,
 		padding: 24,
 		alignItems: 'center',
-		shadowColor: '#000',
+		shadowColor: colors.textPrimary,
 		shadowOpacity: 0.2,
 		shadowRadius: 12,
 		elevation: 12
@@ -109,14 +111,10 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 22,
 		fontWeight: 'bold',
-		color: '#333'
+		color: colors.textPrimary
 	},
-	closeButton: {
-		padding: 4
-	},
-	closeText: {
-		fontSize: 24,
-		color: '#999'
+	closeBtn: {
+		width: 36, height: 36, borderRadius: 18, backgroundColor: colors.backgroundElevated, alignItems: 'center', justifyContent: 'center'
 	},
 	carContainer: {
 		width: 140, // Уменьшенная ширина
@@ -131,7 +129,7 @@ const styles = StyleSheet.create({
 		top: 20,
 		width: 100,
 		height: 200,
-		backgroundColor: '#BDBDBD', // Светло-серый силуэт
+		backgroundColor: colors.surface, // Светло-серый силуэт
 		borderRadius: 35, // Скругленные углы
 		zIndex: 1
 	},
@@ -152,8 +150,8 @@ const styles = StyleSheet.create({
 		borderWidth: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#212121', // Черные шины
-		shadowColor: '#000',
+		backgroundColor: colors.backgroundElevated, // Черные шины
+		shadowColor: colors.textPrimary,
 		shadowOpacity: 0.3,
 		shadowRadius: 4,
 		elevation: 5

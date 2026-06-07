@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions, Animated, 
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import Slider from '@react-native-community/slider'
+import { colors } from '../constants/colors'
 import { CarState } from '../types/car'
 import FeedbackButton from '../components/FeedbackButton'
 
@@ -119,7 +120,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 								<Text style={styles.headerTitle}>Подсветка</Text>
 							</View>
 							<FeedbackButton onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
-								<Ionicons name='close' size={20} color='#fff' />
+								<Ionicons name='close' size={20} color={colors.textPrimary} />
 							</FeedbackButton>
 						</View>
 
@@ -127,8 +128,8 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 						<View style={styles.orbSection}>
 							<FeedbackButton onPress={togglePower} activeOpacity={0.85}>
 								<Animated.View style={[styles.orbOuter, { transform: [{ scale: pulseAnim }] }, isPowerOn && { borderColor: selectedColor + 'AA' }]}>
-									<View style={[styles.orbInner, { backgroundColor: isPowerOn ? selectedColor : '#1A1A2E' }]}>
-										<Ionicons name='power' size={36} color={isPowerOn ? '#fff' : '#555'} />
+									<View style={[styles.orbInner, { backgroundColor: isPowerOn ? selectedColor : colors.backgroundElevated }]}>
+										<Ionicons name='power' size={36} color={isPowerOn ? '#fff' : colors.textMuted} />
 									</View>
 								</Animated.View>
 							</FeedbackButton>
@@ -154,7 +155,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 												}
 											]}
 										>
-											{selectedColor === c.hex && <Ionicons name='checkmark' size={14} color='#fff' />}
+											{selectedColor === c.hex && <Ionicons name='checkmark' size={14} color={colors.textPrimary} />}
 										</View>
 										<Text style={[styles.colorName, selectedColor === c.hex && { color: c.hex }]}>{c.name}</Text>
 									</FeedbackButton>
@@ -166,7 +167,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 						<View style={styles.section}>
 							<View style={styles.brightnessHeader}>
 								<Text style={styles.sectionLabel}>ЯРКОСТЬ</Text>
-								<Text style={[styles.brightnessValue, { color: isPowerOn ? selectedColor : '#555' }]}>{brightness}%</Text>
+								<Text style={[styles.brightnessValue, { color: isPowerOn ? selectedColor : colors.textMuted }]}>{brightness}%</Text>
 							</View>
 
 							<View style={styles.sliderTrackWrap}>
@@ -176,7 +177,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 										styles.sliderFill,
 										{
 											width: `${brightness}%`,
-											backgroundColor: isPowerOn ? selectedColor : '#333'
+											backgroundColor: isPowerOn ? selectedColor : colors.textMuted
 										}
 									]}
 								/>
@@ -189,7 +190,7 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 									maximumValue={100}
 									minimumTrackTintColor='transparent'
 									maximumTrackTintColor='transparent'
-									thumbTintColor={isPowerOn ? selectedColor : '#444'}
+									thumbTintColor={isPowerOn ? selectedColor : colors.textMuted}
 								/>
 							</View>
 
@@ -202,8 +203,8 @@ export default function AmbientLightScreen({ visible, onClose, carState, onState
 										style={[
 											styles.presetChip,
 											brightness === p && {
-												backgroundColor: isPowerOn ? selectedColor + '33' : '#333',
-												borderColor: isPowerOn ? selectedColor : '#555'
+												backgroundColor: isPowerOn ? selectedColor + '33' : colors.textMuted,
+												borderColor: isPowerOn ? selectedColor : colors.textMuted
 											}
 										]}
 										activeOpacity={0.7}
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
 		width: 36,
 		height: 36,
 		borderRadius: 18,
-		backgroundColor: '#1E1E30',
+		backgroundColor: colors.backgroundElevated,
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginTop: 4
@@ -295,10 +296,10 @@ const styles = StyleSheet.create({
 		height: 110,
 		borderRadius: 55,
 		borderWidth: 2,
-		borderColor: '#222',
+		borderColor: colors.border,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#111'
+		backgroundColor: colors.surface
 	},
 	orbInner: {
 		width: 88,
@@ -322,7 +323,7 @@ const styles = StyleSheet.create({
 	sectionLabel: {
 		fontSize: 11,
 		fontWeight: '700',
-		color: '#555',
+		color: colors.textMuted,
 		letterSpacing: 3,
 		marginBottom: 14
 	},
@@ -368,12 +369,12 @@ const styles = StyleSheet.create({
 	brightnessValue: {
 		fontSize: 22,
 		fontWeight: '800',
-		color: '#555'
+		color: colors.textMuted
 	},
 	sliderTrackWrap: {
 		height: 40,
 		justifyContent: 'center',
-		backgroundColor: '#1A1A2E',
+		backgroundColor: colors.backgroundElevated,
 		borderRadius: 20,
 		overflow: 'hidden',
 		marginBottom: 12
@@ -399,9 +400,9 @@ const styles = StyleSheet.create({
 		paddingVertical: 8,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: '#222',
+		borderColor: colors.border,
 		alignItems: 'center',
-		backgroundColor: '#111'
+		backgroundColor: colors.surface
 	},
 	presetText: {
 		fontSize: 13,

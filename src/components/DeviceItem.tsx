@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native'
+import { colors } from '../constants/colors'
 import SignalStrength from './SignalStrength'
 import { BleDevice } from '../types/bluetooth'
 
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		padding: 12,
-		backgroundColor: 'white',
+		backgroundColor: colors.backgroundCard,
 		marginBottom: 8,
 		borderRadius: 8,
 		elevation: 2,
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
 	},
 	deviceId: {
 		fontSize: 12,
-		color: '#666'
+		color: colors.textSecondary
 	},
 	rightActions: {
 		flexDirection: 'row',
@@ -72,16 +73,16 @@ const styles = StyleSheet.create({
 		width: 12,
 		height: 12,
 		borderRadius: 6,
-		backgroundColor: '#4CAF50'
+		backgroundColor: colors.success
 	},
 	disconnectBtn: {
-		backgroundColor: '#FF5252',
+		backgroundColor: colors.danger,
 		paddingHorizontal: 8,
 		paddingVertical: 4,
 		borderRadius: 4
 	},
 	disconnectText: {
-		color: 'white',
+		color: colors.textPrimary,
 		fontSize: 12,
 		fontWeight: '600'
 	}

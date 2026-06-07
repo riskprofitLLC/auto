@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import { View, Text, StyleSheet, Animated } from 'react-native'
+import { colors } from '../constants/colors'
 import { ToastType } from '../types/bluetooth'
 
 interface ToastProps {
@@ -28,7 +29,7 @@ const Toast: React.FC<ToastProps> = ({ message, visible, type = 'info' }) => {
 
 	if (!message && !visible) return null
 
-	const bgColor = type === 'error' ? '#E53935' : type === 'success' ? '#43A047' : '#1E88E5'
+	const bgColor = type === 'error' ? colors.toastError : type === 'success' ? colors.toastSuccess : colors.toastInfo
 
 	return (
 		<Animated.View style={[styles.toast, { opacity: fadeAnim, transform: [{ translateY }], backgroundColor: bgColor }]}>
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
 		zIndex: 999
 	},
 	toastText: {
-		color: '#fff',
+		color: colors.textPrimary,
 		fontSize: 15,
 		fontWeight: '500',
 		textAlign: 'center'

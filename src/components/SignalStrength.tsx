@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
+import { colors } from '../constants/colors'
 import { getBarsCount, getSignalColor } from '../utils/bleHelpers'
 
 interface SignalStrengthProps {
@@ -18,7 +19,7 @@ const SignalStrength: React.FC<SignalStrengthProps> = ({ rssi }) => {
 					style={[
 						styles.signalBar,
 						{
-							backgroundColor: bar <= barsCount ? color : '#E0E0E0',
+							backgroundColor: bar <= barsCount ? color : colors.border,
 							height: 4 + bar * 3
 						}
 					]}
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
 	},
 	rssiText: {
 		fontSize: 10,
-		color: '#666',
+		color: colors.textSecondary,
 		marginLeft: 4,
 		textAlign: 'center'
 	}

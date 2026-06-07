@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import FeedbackButton from './FeedbackButton';
+import { colors } from '../constants/colors';
 import { CarState } from '../types/car';
 
 interface TopBarProps {
@@ -13,31 +15,32 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ connectedDeviceName, carState, onMenuPress, onSettingsPress }) => {
 	return (
 		<View style={styles.container}>
-			{/* Левая часть: Меню */}
-			<FeedbackButton onPress={onMenuPress} style={styles.menuButton}>
-				<Text style={styles.menuIcon}>☰</Text>
+			{/* Левая часть: Меню — круглая кнопка */}
+			<FeedbackButton onPress={onMenuPress} style={styles.iconBtn} activeOpacity={0.7}>
+				<Ionicons name='menu' size={20} color={colors.textPrimary} />
 			</FeedbackButton>
 
-			{/* Центр: Статус устройства */}
+			{/* Центр: Статус */}
 			<View style={styles.centerContent}>
+				<Text style={styles.eyebrow}>СТАТУС</Text>
 				{connectedDeviceName ? (
-					<>
-						<Text style={styles.connectedIcon}>🔵</Text>
+					<View style={styles.statusRow}>
+						<View style={styles.dot} />
 						<Text style={styles.deviceName} numberOfLines={1}>{connectedDeviceName}</Text>
-					</>
+					</View>
 				) : (
 					<Text style={styles.disconnectedText}>Не подключено</Text>
 				)}
 			</View>
 
-			{/* Правая часть: Индикаторы активности и Настройки */}
-			<View style={styles.indicators}>
-				{carState.relay && <Text style={styles.indicator}>🟢</Text>}
-				{carState.steering && <Text style={styles.indicator}>🔥</Text>}
-				{(carState.seat_driver_heat || carState.seat_passenger_heat) && <Text style={styles.indicator}>♨️</Text>}
-				{(carState.seat_driver_vent || carState.seat_passenger_vent) && <Text style={styles.indicator}>💨</Text>}
-				<FeedbackButton onPress={onSettingsPress} style={styles.settingsButton}>
-					<Text style={styles.settingsIcon}>⚙️</Text>
+			{/* Правая часть: Индикаторы и Настройки */}
+			<View style={styles.rightSection}>
+				{carState.relay && <View style={[styles.statusDot, { backgroundColor: colors.success }]} />}
+				{carState.steering && <View style={[styles.statusDot, { backgroundColor: colors.warning }]} />}
+				{(carState.seat_driver_heat || carState.seat_passenger_heat) && <View style={[styles.statusDot, { backgroundColor: colors.seatHeat }]} />}
+				{(carState.seat_driver_vent || carState.seat_passenger_vent) && <View style={[styles.statusDot, { backgroundColor: colors.secondary }]} />}
+				<FeedbackButton onPress={onSettingsPress} style={styles.iconBtn} activeOpacity={0.7}>
+					<Ionicons name='settings-outline' size={20} color={colors.textPrimary} />
 				</FeedbackButton>
 			</View>
 		</View>
@@ -46,65 +49,67 @@ const TopBar: React.FC<TopBarProps> = ({ connectedDeviceName, carState, onMenuPr
 
 const styles = StyleSheet.create({
 	container: {
-		height: 60,
-		backgroundColor: '#fff',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		paddingHorizontal: 16,
+		paddingVertical: 12,
+		backgroundColor: colors.background,
 		borderBottomWidth: 1,
-		borderBottomColor: '#eee',
-		elevation: 2,
-		shadowColor: '#000',
-		shadowOpacity: 0.1,
-		shadowRadius: 2,
-		shadowOffset: { width: 0, height: 1 },
-		zIndex: 10,
+		borderBottomColor: colors.border,
 	},
-	menuButton: {
-		padding: 8,
-	},
-	menuIcon: {
-		fontSize: 24,
-		color: '#333',
+	iconBtn: {
+		width: 36,
+		height: 36,
+		borderRadius: 18,
+		backgroundColor: colors.backgroundElevated,
+		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	centerContent: {
+		flex: 1,
+		alignItems: 'center',
+		marginHorizontal: 12,
+	},
+	eyebrow: {
+		fontSize: 10,
+		fontWeight: '700',
+		color: colors.textMuted,
+		letterSpacing: 3,
+		marginBottom: 2,
+	},
+	statusRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		flex: 1,
-		justifyContent: 'center',
-		marginHorizontal: 10,
+		gap: 6,
 	},
-	connectedIcon: {
-		fontSize: 16,
-		marginRight: 6,
+	dot: {
+		width: 8,
+		height: 8,
+		borderRadius: 4,
+		backgroundColor: colors.success,
 	},
 	deviceName: {
 		fontSize: 16,
-		fontWeight: '600',
-		color: '#333',
-		maxWidth: 200,
+		fontWeight: '700',
+		color: colors.textPrimary,
+		maxWidth: 180,
 	},
 	disconnectedText: {
 		fontSize: 14,
-		color: '#999',
-		fontStyle: 'italic',
+		color: colors.textMuted,
+		fontWeight: '500',
 	},
-	indicators: {
+	rightSection: {
 		flexDirection: 'row',
-		gap: 4,
-		alignItems: 'center'
+		alignItems: 'center',
+		gap: 6,
 	},
-	indicator: {
-		fontSize: 18,
+	statusDot: {
+		width: 8,
+		height: 8,
+		borderRadius: 4,
 	},
-	settingsButton: {
-		padding: 8,
-		marginLeft: 4
-	},
-	settingsIcon: {
-		fontSize: 20,
-	}
 });
 
 export default TopBar;
